@@ -12,7 +12,7 @@ You can also clone the repository with [Git](https://git-scm.com/)...
 
     git clone https://github.com/djalbat/murmuration.git
 
-...and then install the sufficient modules with npm from within the project's root directory:
+...and then install the murmuration modules with npm from within the project's root directory:
 
     npm install
 
@@ -21,7 +21,7 @@ You can also clone the repository with [Git](https://git-scm.com/)...
 If you are building with [Node.js](http://nodejs.org) the usage is as follows:
 
 ```js
-const muarmuration = require('murmuration');
+const murmuration = require('murmuration');
 ```
 
 ## Compiling from source
