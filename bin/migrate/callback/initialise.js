@@ -12,12 +12,13 @@ const { miscellaneousUtilities } = necessary,
 function initialiseCallback(next, done, context) {
   log.debug('Initialise...');
 
-  const operations = [
-    checkTablePresent,
-    createMissingTable
-  ];
+  const { configuration } = context,
+        operations = [
+          checkTablePresent,
+          createMissingTable
+        ];
 
-  transaction(operations, (completed) => {
+  transaction(operations, configuration, (completed) => {
     const error = !completed;
 
     if (error) {

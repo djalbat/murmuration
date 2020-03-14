@@ -34,13 +34,14 @@ module.exports = applyMigrationsCallback;
 function applyMigrationCallback(next, done, context) {
   log.debug('Apply migration...');
 
-  const operations = [
-    getVersion,
-    applyMigration,
-    updateVersion
-  ];
+  const { configuration } = context,
+        operations = [
+          getVersion,
+          applyMigration,
+          updateVersion
+        ];
 
-  transaction(operations, (completed) => {
+  transaction(operations, configuration, (completed) => {
     const error = !completed;
 
     if (error) {

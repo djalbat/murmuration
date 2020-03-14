@@ -8,7 +8,7 @@ const initialiseCallback = require('./migrate/callback/initialise'),
 const { asynchronousUtilities } = necessary,
       { sequence } = asynchronousUtilities;
 
-function migrate(migrationsDirectoryPath, callback) {
+function migrate(migrationsDirectoryPath, configuration, callback) {
   const callbacks = [
           initialiseCallback,
           applyMigrationsCallback
@@ -16,6 +16,7 @@ function migrate(migrationsDirectoryPath, callback) {
         error = false,  ///
         context = {
           error,
+          configuration,
           migrationsDirectoryPath
         };
 
@@ -23,6 +24,8 @@ function migrate(migrationsDirectoryPath, callback) {
     const { error } = context;
 
     delete context.error;
+
+    delete context.configuration;
 
     delete context.migrationsDirectoryPath;
 

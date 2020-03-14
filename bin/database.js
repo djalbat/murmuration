@@ -4,8 +4,8 @@ const mysql = require('mysql'),
       necessary = require('necessary');
 
 const { fileSystemUtilities, miscellaneousUtilities } = necessary,
-      { rc, log } = miscellaneousUtilities,
-      { readFile } = fileSystemUtilities;
+      { readFile } = fileSystemUtilities,
+      { log } = miscellaneousUtilities;
 
 let pool = null;      
 
@@ -59,17 +59,14 @@ function execute(connection, sql, ...remainingArguments) {
   }
 }
 
-function getConnection(callback) {
+function getConnection(configuration, callback) {
   if (pool === null) {
-    const { database } = rc,
-          config = database;  ///
-
-    pool = mysql.createPool(config);
+    pool = mysql.createPool(configuration);
   }
 
   pool.getConnection((error, connection) => {
     if (error) {
-      let sql; ///
+      const sql = null; ///
 
       errorHandler(error, sql);
     }
@@ -130,8 +127,10 @@ function errorHandler(error, sql) {
       const { message } = error;
         
       log.error(message);
-        
-      log.error(`The offending SQL is: ${sql}`);
+
+      if (sql) {
+        log.error(`The offending SQL is: '${sql}'`);
+      }
       break;
   }
 }

@@ -9,7 +9,7 @@ const { asynchronousUtilities, miscellaneousUtilities } = necessary,
       { whilst, sequence } = asynchronousUtilities,
       { getConnection, releaseConnection } = database;
       
-function transaction(operations, callback, context) {
+function transaction(operations, configuration, callback, context) {
   const completed = false,
         callbacks = [
           beginTransactionCallback,
@@ -18,7 +18,7 @@ function transaction(operations, callback, context) {
           rollbackTransactionCallback
         ];
 
-  getConnection((error, connection) => {
+  getConnection(configuration, (error, connection) => {
     if (error) {
       log.error('The transaction wasn\'t completed because there was no connection.');
 

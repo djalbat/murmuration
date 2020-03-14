@@ -27,8 +27,44 @@ You can also clone the repository with [Git](https://git-scm.com/)...
 If you are building with [Node.js](http://nodejs.org) the usage is as follows:
 
 ```js
-const murmuration = require('murmuration');
+const murmuration = require('murmuration'),
+      { database, migrate, transaction } = murmuration,
+      { query, execute, getConnection, releaseConnection, sqlFromFilePath } = database;
+
+...
 ```
+Each of these functions is explained in the examples that follow.
+
+## Examples
+
+### Getting and releasing connections
+
+The `getConnection()` function takes a configuration and a callback argument while the `releaseConnection()` function takes a connection argument:
+
+```js
+const configuration = {
+        ...
+      };
+
+getConnection(configuration, (error, connection) => {
+  ...
+
+  releaseConnection(connection);
+});
+```
+The configuration should be a plain old JavaScript object with at least the following properties:
+
+```
+{
+  host,
+  user,
+  password,
+  database
+}
+```
+The full list of options can be found in the `mysql` package options [here](https://github.com/mysqljs/mysql#connection-options).
+
+If successful, the `error` argument of the callback is falsey and the connection object is returned, otherwise the
 
 ## Compiling from source
 
