@@ -74,11 +74,11 @@ In the event of an error, if a `log` option has been provided then the `log.erro
 
 * `ER_ACCESS_DENIED_ERROR` - `'The username or the password are wrong, probably.'`
 
-* `ETIMEOUT` or `PROTOCOL_SEQUENCE_TIMEOUT` - `'The database is timing out for some reason.'`
+* `ETIMEOUT` or `PROTOCOL_SEQUENCE_TIMEOUT` - `'The database server is down, probably.'`
 
-* `ER_PARSE_ERROR` or `ER_BAD_TABLE_ERROR` - In these cases the error code is simply echoed and the offending SQL, if there is any, will be returned in a separate call.
+* `ER_PARSE_ERROR` or `ER_BAD_TABLE_ERROR` - In these cases the error code is simply echoed and the offending SQL, if there is any, will be returned in a separate call to the `log.error()` function.
 
-This error handling is rudimentary and is meant to help with basic debugging largely around providing the wrong connection options. If you do not find these messages helpful, do not provide a `log` object in the options and rest assured the error code will be returned either way for you do deal with as you see fit.
+Such error handling is admittedly rudimentary and is only meant to help with debugging simple mistakes such as providing the incorrect connection options such as hosts or passwords. If you do not find these messages helpful, do not provide a `log` object in the options and rest assured the error code will be returned either way for you do deal with as you see fit.
 
 ## Compiling from source
 
