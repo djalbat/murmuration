@@ -39,7 +39,7 @@ Each of these functions is explained in the examples that follow.
 
 ### Getting and releasing connections
 
-The `getConnection()` function takes a `configuration` and a `callback` argument while the `releaseConnection()` function takes a `connection` argument:
+The `getConnection()` function takes `configuration` and `callback` arguments whilst the `releaseConnection()` function takes a `connection` argument:
 
 ```js
 const configuration = {
@@ -52,34 +52,33 @@ getConnection(configuration, (error, connection) => {
   releaseConnection(connection);
 });
 ```
-The configuration should be a plain old JavaScript object with at least the following properties:
+The `configuration` argument should be a plain old JavaScript object with at least the following properties:
 
 ```
 {
-  log,
   host,
   user,
   password,
   database
 }
 ```
-Aside from the `log` option, which is added by this package, the full list of options can be found in the [mysql](https://github.com/mysqljs/mysql) package documentation [here](https://github.com/mysqljs/mysql#connection-options).
+The full list of options can be found in the [mysql](https://github.com/mysqljs/mysql) package documentation [here](https://github.com/mysqljs/mysql#connection-options). If successful, the `error` argument of the callback will be falsey and the connection object will be returned, otherwise the `error` argument will be truthy.
 
-If successful, the `error` argument of the callback will be falsey and the connection object will be returned, otherwise the `error` argument will be truthy.
+In the event of an error, if a `log` option has been provided then the `log.error()` function will be called with a message containing a reasonable stab at the cause of the error. Specifically, the following error codes are mapped to the following messages:
 
-In the event of an error, if a `log` option has been provided then the `log.error()` function will be called with a message containing a reasonable stab at the cause. Specifically, the following error codes are mapped to the following messages:
+* `ECONNREFUSED` - `'The database isn\'t running, probably.'`
 
-* `ECONNREFUSED` - `The database isn\'t running, probably.`
+* `ENOTFOUND` - `'The host is wrong, probably.'`
 
-* `ENOTFOUND` - `The host is wrong, probably.`
+* `ER_BAD_DB_ERROR` - `'The database name is wrong, probably.'`
 
-* `ER_BAD_DB_ERROR` - `The database name is wrong, probably.`
+* `ER_ACCESS_DENIED_ERROR` - `'The username or the password are wrong, probably.'`
 
-* `ER_ACCESS_DENIED_ERROR` - `The username or the password are wrong, probably.`
+* `ETIMEOUT` or `PROTOCOL_SEQUENCE_TIMEOUT` - `'The database is timing out for some reason.'`
 
-* `ETIMEOUT` or `PROTOCOL_SEQUENCE_TIMEOUT` - `The database is timing out.`
+* `ER_PARSE_ERROR` or `ER_BAD_TABLE_ERROR` - In these cases the error code is simply echoed and the offending SQL, if there is any, will be returned in a separate call.
 
-* `ER_PARSE_ERROR` or `ER_BAD_TABLE_ERROR` - In these cases the error code is simply echoed and the offending SQL, if there is any, is also returned in a separate call.
+This error handling is rudimentary and is meant to help with basic debugging largely around providing the wrong connection options. If you do not find these messages helpful, do not provide a `log` object in the options and rest assured the error code will be returned either way for you do deal with as you see fit.
 
 ## Compiling from source
 

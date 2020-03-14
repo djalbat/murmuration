@@ -118,7 +118,7 @@ function logError(error, sql, log) {
 
     case 'ETIMEOUT' :
     case 'PROTOCOL_SEQUENCE_TIMEOUT' :
-      log.error('The database is timing out.');
+      log.error('The database is timing out for some reason.');
       break;
 
     case 'ER_PARSE_ERROR' :
