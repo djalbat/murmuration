@@ -3,9 +3,8 @@
 const mysql = require('mysql'),
       necessary = require('necessary');
 
-const { fileSystemUtilities, miscellaneousUtilities } = necessary,
-      { readFile } = fileSystemUtilities,
-      { log } = miscellaneousUtilities;
+const { fileSystemUtilities } = necessary,
+      { readFile } = fileSystemUtilities;
 
 let pool = null;      
 
@@ -16,12 +15,12 @@ function query(connection, sql, ...remainingArguments) {
   try {
     connection.query(sql, values, (error, rows) => {
       if (error) {
-        errorHandler(error, sql);
+        const { log } = connection;
+
+        log && logError(error, sql, log);
 
         rows = null;
       }
-
-      error = !!error;  ///
 
       callback(error, rows);
     });
@@ -29,8 +28,6 @@ function query(connection, sql, ...remainingArguments) {
     let rows; ///
 
     log.error(error);
-
-    error = !!error;  ///
 
     callback(error, rows);
   }
@@ -43,17 +40,15 @@ function execute(connection, sql, ...remainingArguments) {
   try {
     connection.query(sql, values, (error) => {
       if (error) {
-        errorHandler(error, sql);
-      }
+        const { log } = connection;
 
-      error = !!error;  ///
+        log && logError(error, sql, log);
+      }
 
       callback(error);
     });
   } catch (error) {
     log.error(error);
-
-    error = !!error;  ///
 
     callback(error);
   }
@@ -65,13 +60,17 @@ function getConnection(configuration, callback) {
   }
 
   pool.getConnection((error, connection) => {
+    const { log } = configuration;
+
     if (error) {
       const sql = null; ///
 
-      errorHandler(error, sql);
+      log && logError(error, sql, log);
     }
 
-    error = !!error;  ///
+    log && Object.assign(connection, {
+      log
+    });
 
     callback(error, connection);
   });
@@ -95,7 +94,7 @@ module.exports = {
   sqlFromFilePath
 };
 
-function errorHandler(error, sql) {
+function logError(error, sql, log) {
   const { code } = error;
   
   log.error(code);
@@ -119,7 +118,7 @@ function errorHandler(error, sql) {
 
     case 'ETIMEOUT' :
     case 'PROTOCOL_SEQUENCE_TIMEOUT' :
-      log.error('The active build in the runtime configuration is wrong, probably.');
+      log.error('The database is timing out.');
       break;
 
     case 'ER_PARSE_ERROR' :
