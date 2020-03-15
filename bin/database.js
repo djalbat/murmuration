@@ -15,9 +15,7 @@ function query(connection, sql, ...remainingArguments) {
   try {
     connection.query(sql, values, (error, rows) => {
       if (error) {
-        const { log } = connection;
-
-        log && logError(error, sql, log);
+        logError(connection, error, sql);
 
         rows = null;
       }
@@ -25,9 +23,12 @@ function query(connection, sql, ...remainingArguments) {
       callback(error, rows);
     });
   } catch (error) {
-    let rows; ///
+    const { log } = connection,
+          rows = null;  ///
 
-    log.error(error);
+    if (log) {
+      log.error(error);
+    }
 
     callback(error, rows);
   }
@@ -40,15 +41,17 @@ function execute(connection, sql, ...remainingArguments) {
   try {
     connection.query(sql, values, (error) => {
       if (error) {
-        const { log } = connection;
-
-        log && logError(error, sql, log);
+        logError(connection, error, sql);
       }
 
       callback(error);
     });
   } catch (error) {
-    log.error(error);
+    const { log } = connection;
+
+    if (log) {
+      log.error(error);
+    }
 
     callback(error);
   }
@@ -63,12 +66,15 @@ function getConnection(configuration, callback) {
     const { log } = configuration;
 
     if (error) {
-      const sql = null; ///
+      const sql = null, ///
+            connection = {  ///
+              log
+            };
 
-      log && logError(error, sql, log);
+      logError(connection, error, sql);
     }
 
-    log && Object.assign(connection, {
+    Object.assign(connection, {
       log
     });
 
@@ -94,7 +100,13 @@ module.exports = {
   sqlFromFilePath
 };
 
-function logError(error, sql, log) {
+function logError(connection, error, sql) {
+  const { log } = connection;
+
+  if (!log) {
+    return;
+  }
+
   const { code } = error;
   
   log.error(code);

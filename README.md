@@ -2,9 +2,9 @@
 
 Migrations and transactions for MariaDB.
 
-Murmuration is meant to be used as alternative to a database [ORM](https://en.wikipedia.org/wiki/Object-relational_mapping) package. Aside from migrations it is deliberately simple and low level, in the sense that it provides no more than the bare minimum functionality needed to connect to a MariaDB database and execute queries, optionally in the context of transactions.
+Murmuration is meant to be used as alternative to a database [ORM](https://en.wikipedia.org/wiki/Object-relational_mapping). Aside from migrations, it is deliberately simple and low level, in the sense that it provides no more than the bare minimum functionality needed to connect to a MariaDB database and execute queries, optionally in the context of transactions.
 
-The migration functionality, if used correctly, will guarantee that a Node application's codebase remains in line with database it relies on, updating the latter each time the former is deployed.
+The migration functionality, if used correctly, will guarantee that a Node application's codebase remains in line with the database it relies on, updating the latter each time the former is deployed.
 
 The prescriptions given below are an essential part of the package. They show how to write database utility functions at scale, how to employ them in the context of transactions, and they outline in detail what practices need to be adhered to in order to guarantee successful migrations.
 
@@ -18,7 +18,7 @@ You can also clone the repository with [Git](https://git-scm.com/)...
 
     git clone https://github.com/djalbat/murmuration.git
 
-...and then install the murmuration modules with npm from within the project's root directory:
+...and then install the dependencies with npm from within the project's root directory:
 
     npm install
 
@@ -26,22 +26,19 @@ You can also clone the repository with [Git](https://git-scm.com/)...
 
 If you are building with [Node.js](http://nodejs.org) the usage is as follows:
 
-```js
+```
 const murmuration = require('murmuration'),
       { database, migrate, transaction } = murmuration,
       { query, execute, getConnection, releaseConnection, sqlFromFilePath } = database;
 
 ...
 ```
-Each of these functions is explained in the examples that follow.
-
-## Examples
 
 ### Getting and releasing connections
 
 The `getConnection()` function takes `configuration` and `callback` arguments whilst the `releaseConnection()` function takes a `connection` argument:
 
-```js
+```
 const configuration = {
         ...
       };
@@ -79,6 +76,62 @@ In the event of an error, if a `log` option has been provided then the `log.erro
 * `ER_PARSE_ERROR` or `ER_BAD_TABLE_ERROR` - In these cases the error code is simply echoed and the offending SQL, if there is any, will be returned in a separate call to the `log.error()` function.
 
 Such error handling is admittedly rudimentary and is only meant to help with debugging simple mistakes such as providing the incorrect connection options such as hosts or passwords. If you do not find these messages helpful, do not provide a `log` object in the options and rest assured the error code will be returned either way for you do deal with as you see fit.
+
+### Reading SQL
+
+There is an `sqlFromFilePath()` function that essentially does nothing more than paper over Nodes's own `fs.readFileSync()` function, throwing any native errors:
+
+```
+const filePath = ... ;
+
+try {
+  const sql = sqlFromFilePath(filePath);
+
+  ...
+} catch (error) {
+  ...
+}
+```
+
+### Executing queries
+
+Two functions are provided, namely `query()` and `execute()`. The former returns an error and an array of rows returned by the query by way of a callback, the latter only an error. Otherwise their signatures are the same.
+
+```
+const sql = ...;
+
+query(connection, sql, username, password, (error, rows) => {
+
+  ...
+
+});
+
+execute(connection, sql, username, password, status, (error) => {
+
+  ...
+
+});
+```
+In both cases, a variable length list of additional arguments can be passed between the `sql` and `callback` arguments. These are then echoed in the SQL that the functions consume. For example, the SQL passed to the `query()` function might be the following:
+
+```
+
+
+  SELECT * FROM `user` WHERE `username`=? and `password`=MD5(?);
+
+
+```
+Similarly the SQL passed to the `execute()` function might be the following:
+
+```
+
+  INSERT INTO `user` (``username`, `password`, `status`) VALUES(?,?,MD5(?),?);
+
+
+```
+The question marks will be replaced with the values of the arguments in strict order. For more information on this process and for queries in general, see the mysql package documentation [here](https://github.com/mysqljs/mysql#performing-queries).
+
+As in the case of the `getConnection()` function,
 
 ## Compiling from source
 
