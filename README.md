@@ -26,7 +26,7 @@ You can also clone the repository with [Git](https://git-scm.com/)...
 
 If you are building with [Node.js](http://nodejs.org) the usage is as follows:
 
-```
+```js
 const murmuration = require('murmuration'),
       { database, migrate, transaction } = murmuration,
       { query, execute, getConnection, releaseConnection, sqlFromFilePath } = database;
@@ -38,7 +38,7 @@ const murmuration = require('murmuration'),
 
 The `getConnection()` function takes `configuration` and `callback` arguments whilst the `releaseConnection()` function takes a `connection` argument:
 
-```
+```js
 const configuration = {
         ...
       };
@@ -81,7 +81,7 @@ Such error handling is admittedly rudimentary and is only meant to help with deb
 
 There is an `sqlFromFilePath()` function that essentially does nothing more than paper over Nodes's own `fs.readFileSync()` function, throwing any native errors:
 
-```
+```js
 const filePath = ... ;
 
 try {
@@ -97,7 +97,7 @@ try {
 
 Two functions are provided, namely `query()` and `execute()`. The former returns an error and an array of rows returned by the query by way of a callback, the latter only an error. Otherwise their signatures are the same.
 
-```
+```js
 const sql = ...;
 
 query(connection, sql, username, password, (error, rows) => {
