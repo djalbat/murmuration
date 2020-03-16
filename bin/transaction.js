@@ -9,7 +9,7 @@ const { asynchronousUtilities, miscellaneousUtilities } = necessary,
       { whilst, sequence } = asynchronousUtilities,
       { getConnection, releaseConnection } = database;
       
-function transaction(operations, configuration, callback, context) {
+function transaction(configuration, operations, callback, context) {
   const completed = false,
         callbacks = [
           beginTransactionCallback,

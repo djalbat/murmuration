@@ -189,6 +189,63 @@ Note that the parameters, as well as matching the function names precisely, are 
 
 Lastly, it is recommended that you avoid complex queries that span more than one table and always employ views instead. For information on views, see the MariaDB documentation [here](https://mariadb.com/kb/en/views/).
 
+### Using transactions
+
+It is recommended that all database operations are run in the context of transactions. There is a single `transaction()` function that allows you to do this. It takes a configuration and a list of operations together with a callback with a `completed` argument and a mandatory context, which must be a plain old JavaScript object.
+
+```js
+const emailAddress = ... ,
+      username = ... ,
+      password = ... ,
+      success = false,
+      configuration = ... ,
+      operations = [
+        checkUsernameAvailable,
+        checkEmailAddressAvailable,
+        addEmailAddressUsernamePasswordAndStatus,
+        retrieveUserIdentifier,
+      ],
+      context = {
+        emailAddress,
+        username,
+        password,
+        success
+      };
+
+transaction(configuration, operations, (completed) => {
+
+  ..
+
+}, context);
+```
+
+The `transaction()` function makes use of the `context` object itself, consequently its `connection`, `operations` and `completed` properties are reserved.
+
+The signature of the operation functions must be identical to the following example:
+
+```js
+function checkUsernameAvailable(connection, abort, proceed, complete, context) {
+  const { username } = context;
+
+  selectUsername(connection, username, function(error, rows) {
+    if (error) {
+      abort();
+
+      return;
+    }
+
+    const rowsLength = rows.length;
+
+    (rowsLength === 0) ?
+      proceed() :
+        complete();
+  });
+}
+```
+
+
+
+
 ## Compiling from source
 
 Automation is done with [npm scripts](https://docs.npmjs.com/misc/scripts), have a look at the `package.json` file. The pertinent commands are:
