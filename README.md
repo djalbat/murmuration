@@ -191,11 +191,9 @@ Lastly, it is recommended that you avoid complex queries that span more than one
 
 ### Using transactions
 
-Ideally, all database operations should be run in the context of transactions. There is a single `transaction()` function that allows you to do this. It takes `configuration`, `operations`, `callback` and `context` arguments. The callback provided will have a `completed` argument and the context is mandatory and must be a plain old JavaScript object.
+Ideally, all database operations should be run in the context of transactions. There is a single `transaction()` function that allows you to do this. It takes `configuration`, `operations`, `callback` and `context` arguments. The callback provided will have a `completed` argument while the context is mandatory and must be a plain old JavaScript object. The `transaction()` function makes use of the `context` object itself, in fact, with the object's `connection`, `operations` and `completed` properties being reserved.
 
-The `transaction()` function makes use of the `context` object itself, consequently the object's `connection`, `operations` and `completed` properties are reserved.
-
-In the example below, a list of four operations has been provided and the context has properties that these operations will make use of:
+In the example below, four operations has been provided and the context has properties that they will make use of:
 
 ```js
 const configuration = ... ,
@@ -238,13 +236,15 @@ function checkUsernameAvailable(connection, abort, proceed, complete, context) {
   });
 }
 ```
-Note the provision of the `abort()`, `proceed()` and `complete()` callbacks, each of which is used in the example above. Their utility should be self evident. One important point to note is that there is an explicit `return` statement after the call to the `abort()` callback. It is easy to forget that invoking a callback does not prevent execution continuing in the current context.
+Note the provision of the `abort()`, `proceed()` and `complete()` callbacks, each of which is utilised. Their utility should be self evident. One important point to note is that there is an explicit `return` statement after the call to the `abort()` callback. It is easy to forget that invoking a callback does not prevent execution continuing in the current context.
 
-It is entirely possible to conflate the first three of these operations into a single SQL statement and then to combine that with the last SQL statement that recovers an auto-incremented identifier. Both of these statements can then be placed in a single SQL file and run with a single call to the `query()` function. There is nothing to be gained from such a approach, however, and there are good reasons not to take it:
+It is entirely possible to conflate the first three of these operations into a single SQL statement and then to combine that with the last SQL statement that recovers an auto-incremented identifier. Both of these statements can then be placed in a single SQL file and run with a call to the `query()` function. There is nothing to be gained from such a approach, however, and there are good reasons not to take it:
 
-* You can try to insert values into a table and test whether they are unique by whether or not they have indeed been inserted. However, the database will throw an error that is indistinguishable from errors that occur because of, say, a mistake in SQL syntax. It could be considered bad practice to knowingly run a query that may result in an error and use this as a test for whether or not the otherwise correct query has been successful.
+* You can try to insert values into a table and test whether they are unique by whether or not the insert fails. However, the database will throw an error that is indistinguishable from errors that occur because of, say, a syntax error in the SQL. It could be considered bad practice to knowingly run a query that may result in an error and use the presence of such as a test for whether or not the otherwise correct query has been successful.
 
-* Often conflating operations means that application logic that is far more suited to, in this case, JavaScript must be added to the SQL itself or, worse, is simply assumed to be implicit therein. It is far better to implement this logic explicitly in JavaScript than complicate SQL statements with it.
+* Often conflating operations means that application logic that is far more suited to, in this case, JavaScript must be added to the SQL itself. Or worse, the application logic is simply assumed to be implicit in the SQL. It is far better to implement application logic explicitly in JavaScript than complicate SQL statements with it.
+
+* As well as conditional branching, for example, often functionality needs to be implemented in the context of a transaction that cannot simply be added to an SQL statement. Unzipping a stored binary, for example, or checking some other program variable dependent upon some query. Having a context means that even though several parts of the application logic are related, they can still effectively work together over a series of operations.
 
 The example above demonstrates the crux of the approach taken here. The application logic, if any, is to be found in easily readable and atomic form within the body of each operation. On the other hand the SQL queries and commands themselves are considered to be dumb in the sense that they do nothing be slavishly insert or retrieve information from the database. This approach leads to less SQL and more JavaScript, but, as already mentioned but well worth repeating, that JavaScript is easily readable and atomic. The downside is a small amount of boilerplate JavaScript wrapping each operation, however this is considered a small price to pay. In essence then, spread your application logic across a sequence of JavaScript operations rather than attempting to bundle it into one or two SQL statements.
 
