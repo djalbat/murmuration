@@ -6,7 +6,7 @@ Murmuration is meant to be used as alternative to a database [ORM](https://en.wi
 
 The migration functionality, if used correctly, will guarantee that a Node application's codebase remains in line with the database it relies on, updating the latter each time the former is deployed.
 
-The prescriptions given below are an essential part of the package. They show how to write database utility functions at scale, how to employ them in the context of transactions, and they outline in detail what practices need to be adhered to in order to guarantee successful migrations.
+The prescriptions given below are an essential part of the package. They show how to write database utility functions at scale, how to employ them in the context of transactions, and they outline in detail what needs to be done in order to guarantee successful migrations.
 
 ## Installation
 
