@@ -238,9 +238,15 @@ function checkUsernameAvailable(connection, abort, proceed, complete, context) {
   });
 }
 ```
-Note the provision of the `abort()`, `proceed()` and `complete()` callbacks, each of which is used in the operation. Their utility should be self evident.
+Note the provision of the `abort()`, `proceed()` and `complete()` callbacks, each of which is used in the operation. Their utility should be self evident. One important point to note is that there is an explicit `return` statement after the call to the `abort()` callback. It is easy to forget that invoking a callback does not prevent execution continuing in the current context.
 
+It is entirely possible to conflate the first three of these operations into a single operation and then to combine that operation with the last operation that recovers an auto-incremented identifier. Both operations can then be placed in a single SQL file and run with a single call to the `query()` function. There is nothing to be gained from such a approach, however, and there are good reasons not to take it:
 
+* You can try to insert values into a table and test whether they are unique by whether or not they have indeed be`en inserted. However, the database will throw an error that is indistinguishable from errors that occur because of, say, a mistake in SQL syntax. It could be considered bad practice to knowingly run a query that may result in an error and use this as a test for whether or not the otherwise correct query has been successful.
+
+* Often conflating operations means that application logic that is far more suited to, in this case, JavaScript must be added to the SQL itself or, worse, is simply assumed to be implicit therein. It is far better to implement this logic explicitly in JavaScript than complicate SQL operations with it.
+
+The example above demonstrates the crux of the approach taken here. The application logic, if any, is to be found in easily readable and atomic form within the body of each operation whilst the SQL queries and commands themselves are considered to be dumb in the sense that they do nothing be slavishly insert or retrieve information from the database. This approach leads to less SQL and more JavaScript, but, as already mentioned but well worth repeating, that JavaScript is easily readable and atomic. The downside is a small amount of boilerplate JavaScript wrapping each operation, however this is considered a small price to pay. In essence then, spread your application logic across a sequence of JavaScript operations rather than attempting to bundle it into one or two SQL operations.
 
 ## Compiling from source
 
