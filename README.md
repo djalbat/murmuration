@@ -191,7 +191,7 @@ Lastly, it is recommended that you avoid complex queries that span more than one
 
 ### Using transactions
 
-Ideally, all database operations should be run in the context of transactions. There is a single `transaction()` function that allows you to do this. It takes a `configuration` argument , an `operations` argument , a `callback` argument and a mandatory `context` argument. The callback provided will have a `completed` argument and the context must be a plain old JavaScript object.
+Ideally, all database operations should be run in the context of transactions. There is a single `transaction()` function that allows you to do this. It takes `configuration`, `operations`, `callback` and `context` arguments. The callback provided will have a `completed` argument and the context is mandatory and must be a plain old JavaScript object.
 
 The `transaction()` function makes use of the `context` object itself, consequently the object's `connection`, `operations` and `completed` properties are reserved.
 
