@@ -219,7 +219,7 @@ transaction(configuration, operations, (completed) => {
 }, context);
 ```
 
-The `transaction()` function makes use of the `context` object itself, consequently its `connection`, `operations` and `completed` properties are reserved.
+The `transaction()` function makes use of the `context` object itself, consequently the object's `connection`, `operations` and `completed` properties are reserved.
 
 The signature of the operation functions must be identical to the following example:
 
