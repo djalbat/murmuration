@@ -252,7 +252,19 @@ This approach leads to less SQL and more JavaScript, however, as already mention
 
 ### Making use of migrations
 
-The migration functionality will definitely not suit every use case, however it can provide surety for small applications running on multiple Node servers connecting to a single MariaDB instance. It is essential that the prescriptions below are followed pretty much to the letter. Failing to do so will doubtless result in failure.
+The migration functionality will definitely not suit every use case, however it can provide surety for small applications running on multiple Node instances connecting to a single MariaDB instance. It is essential that the prescriptions below are followed pretty much to the letter. Failing to do so will doubtless result in failure.
+
+The `migrate()` function takes the usual `configuration` argument followed by `migrationsDirectoryPath` and a `callback` argument.  The callback is invoked with the usual `error` argument, which is truthy if the migrations have succeeded and falsey otherwise.
+
+```js
+const configuration = ... ,
+      migrationDirectoryPath = ... ;  ///
+
+migrate(configuration, migrationDirectoryPath, function(error) {
+
+  ...
+});
+```
 
 
 

@@ -18,7 +18,7 @@ function initialiseCallback(next, done, context) {
           createMissingTable
         ];
 
-  transaction(operations, configuration, (completed) => {
+  transaction(configuration, operations, (completed) => {
     const error = !completed;
 
     if (error) {

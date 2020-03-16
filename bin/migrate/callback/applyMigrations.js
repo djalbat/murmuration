@@ -41,7 +41,7 @@ function applyMigrationCallback(next, done, context) {
           updateVersion
         ];
 
-  transaction(operations, configuration, (completed) => {
+  transaction(configuration, operations, (completed) => {
     const error = !completed;
 
     if (error) {
