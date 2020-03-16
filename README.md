@@ -136,7 +136,7 @@ The `execute()` function is treated entirely similarly.
 
 For more information on placeholders and performing queries in general, see the mysql package documentation [here](https://github.com/mysqljs/mysql#performing-queries).
 
-To make use of these functions, it is recommended that you create a file corresponding to each table or view, and name functions to reflect the SQL operation and parameters. THe SQL they employ can be read from files the names of which exactly match the function names. For example:
+To make use of these functions, it is recommended that you create a file corresponding to each table or view, naming the functions therein to reflect the SQL operations and parameters. The SQL they employ can be read from files, the names of which exactly match the function names. For example:
 
 ```js
 const SELECT_USERNAME_FILE_NAME = 'table/user/selectUsername.sql',
@@ -185,7 +185,9 @@ function updateNameIdentifier(connection, name, identifier, callback) {
   });
 }
 ```
-Note that the parameters, as well as matching the function name precisely, are passed directly to the `query()` or `execute()` functions. Essentially the only purpose of these functions is to retrieve the SQL, pass it to the requisite function and log an error if it occurs.
+Note that the parameters, as well as matching the function names precisely, are passed directly to the `query()` or `execute()` functions. Essentially the only purpose of these functions is to retrieve the SQL, pass it to the requisite murmuration function and log an error if it occurs.
+
+Lastly, it is recommended that you avoid complex queries that span more than one table and always employ views instead. For information on views, see the MariaDB documentation [here](https://mariadb.com/kb/en/views/).
 
 ## Compiling from source
 
