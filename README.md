@@ -93,45 +93,45 @@ try {
 }
 ```
 
-### Executing queries
+### Running queries
 
-Two functions are provided, namely `query()` and `execute()`. The former returns an error and an array of rows returned by the query by way of a callback, the latter only an error. Otherwise their signatures are the same.
+Two functions are provided, namely `query()` and `execute()`. The former returns an error and an array of rows returned by the query by way of a callback, the latter only an error. Otherwise their signatures are the same:
 
 ```js
 const sql = ...;
 
+query(connection, sql, ...values, (error, rows) => {
+
+  ...
+
+});
+
+execute(connection, sql, ...values, status, (error) => {
+
+  ...
+
+});
+```
+In both cases, a variable length list of values can be passed between the `sql` and `callback` arguments. These replace the `?`placeholders in the SQL you provide. For example, if the SQL passed to the `query()` function is the the following...
+
+```
+
+  SELECT * FROM `user` WHERE `username`=? and `password`=MD5(?);
+
+```
+...you would call the `query()` function thus:
+
+```js
 query(connection, sql, username, password, (error, rows) => {
 
   ...
 
 });
 
-execute(connection, sql, username, password, status, (error) => {
-
-  ...
-
-});
 ```
-In both cases, a variable length list of additional arguments can be passed between the `sql` and `callback` arguments. These are then echoed in the SQL that the functions consume. For example, the SQL passed to the `query()` function might be the following:
+The `execute()` function is treated entirely similarly.
 
-```
-
-
-  SELECT * FROM `user` WHERE `username`=? and `password`=MD5(?);
-
-
-```
-Similarly the SQL passed to the `execute()` function might be the following:
-
-```
-
-  INSERT INTO `user` (``username`, `password`, `status`) VALUES(?,?,MD5(?),?);
-
-
-```
-The question marks will be replaced with the values of the arguments in strict order. For more information on this process and for queries in general, see the mysql package documentation [here](https://github.com/mysqljs/mysql#performing-queries).
-
-As in the case of the `getConnection()` function,
+For more information on placeholders and on queries in general, see the mysql package documentation [here](https://github.com/mysqljs/mysql#performing-queries).
 
 ## Compiling from source
 

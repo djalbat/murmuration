@@ -12,8 +12,10 @@ function query(connection, sql, ...remainingArguments) {
   const values = remainingArguments,
         callback = values.pop();  ///
 
+  sql = connection.format(sql, values);
+
   try {
-    connection.query(sql, values, (error, rows) => {
+    connection.query(sql, (error, rows) => {
       if (error) {
         logError(connection, error, sql);
 
@@ -38,8 +40,10 @@ function execute(connection, sql, ...remainingArguments) {
   const values = remainingArguments,
         callback = values.pop();  ///
 
+  sql = connection.format(sql, values);
+
   try {
-    connection.query(sql, values, (error) => {
+    connection.query(sql, (error) => {
       if (error) {
         logError(connection, error, sql);
       }
