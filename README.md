@@ -79,7 +79,7 @@ If you do choose to set a `log` property on the configuration object then subseq
 
 ### Reading SQL
 
-There is an `sqlFromFilePath()` function that essentially does nothing more than paper over Nodes's own `fs.readFileSync()` function, throwing any native errors:
+There is an `sqlFromFilePath()` function that essentially does no more than paper over Nodes's own `fs.readFileSync()` function, throwing any native errors:
 
 ```js
 const filePath = ... ;
