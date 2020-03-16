@@ -191,7 +191,7 @@ Lastly, it is recommended that you avoid complex queries that span more than one
 
 ### Using transactions
 
-It is recommended that all database operations are run in the context of transactions. There is a single `transaction()` function that allows you to do this. It takes a `configuration` argument , an `operations` argument , a `callback` argument and a mandatory `context` argument. The callback provided will have a `completed` argument and the context must be a plain old JavaScript object.
+Ideally, all database operations should be run in the context of transactions. There is a single `transaction()` function that allows you to do this. It takes a `configuration` argument , an `operations` argument , a `callback` argument and a mandatory `context` argument. The callback provided will have a `completed` argument and the context must be a plain old JavaScript object.
 
 The `transaction()` function makes use of the `context` object itself, consequently the object's `connection`, `operations` and `completed` properties are reserved.
 
@@ -247,6 +247,12 @@ It is entirely possible to conflate the first three of these operations into a s
 * Often conflating operations means that application logic that is far more suited to, in this case, JavaScript must be added to the SQL itself or, worse, is simply assumed to be implicit therein. It is far better to implement this logic explicitly in JavaScript than complicate SQL statements with it.
 
 The example above demonstrates the crux of the approach taken here. The application logic, if any, is to be found in easily readable and atomic form within the body of each operation. On the other hand the SQL queries and commands themselves are considered to be dumb in the sense that they do nothing be slavishly insert or retrieve information from the database. This approach leads to less SQL and more JavaScript, but, as already mentioned but well worth repeating, that JavaScript is easily readable and atomic. The downside is a small amount of boilerplate JavaScript wrapping each operation, however this is considered a small price to pay. In essence then, spread your application logic across a sequence of JavaScript operations rather than attempting to bundle it into one or two SQL statements.
+
+### Making use of migrations
+
+The migration functionality will definitely not suit every use case, however it can provide surety for small applications running on multiple Node servers connecting to a single MariaDB instance. It is essential that the prescriptions below are followed pretty much to the letter. Failing to do so will doubtless result in failure.
+
+
 
 ## Compiling from source
 
