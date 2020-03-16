@@ -254,18 +254,35 @@ This approach leads to less SQL and more JavaScript, however, as already mention
 
 The migration functionality will definitely not suit every use case, however it can provide surety for small applications running on multiple Node instances connecting to a single MariaDB instance. It is essential that the prescriptions below are followed pretty much to the letter. Failing to do so will doubtless result in failure.
 
-The `migrate()` function takes the usual `configuration` argument followed by `migrationsDirectoryPath` and a `callback` argument.  The callback is invoked with the usual `error` argument, which is truthy if the migrations have succeeded and falsey otherwise.
+The `migrate()` function takes the usual `configuration` argument followed by `migrationsDirectoryPath` argument and a `callback` argument.  The callback is invoked with the usual `error` argument, which is truthy if the migrations have succeeded and falsey otherwise.
 
 ```js
 const configuration = ... ,
-      migrationDirectoryPath = ... ;  ///
+      migrationsDirectoryPath = ... ;  ///
 
-migrate(configuration, migrationDirectoryPath, function(error) {
+migrate(configuration, migrationsDirectoryPath, function(error) {
 
   ...
 });
 ```
+Within the migrations directory there should be a collection of SQL files each containing a single SQL statement that changes the database schema or data in some way, namely a migration. The naming convention for the SQL files is that they must start with a positive integer followed by a dash. Further, since the migration functionality looks for this pattern in the fully qualified file path with a regular expression, the migration diretory in indeed any of its parent directories cannot have this pattern. Perhaps an example of the first few migration files in an example application will be more helpful:
 
+```
+migration -- -- 1-create-user-table.sql
+            |
+             -- 2-alter-user-table-add-username-column.sql
+            |
+             -- 3-alter-user-table-add-password-column.sql
+            |
+             -- 4-alter-user-table-move-username-column.sql
+            |
+             -- 5-create-access-table.sql
+            |
+             -- 5-alter-access-table-add-user-identifier-foreign-key.sql
+
+            ...
+```
+Aside from the integer-dash format, there is no specific format for the file names needed, however it is recommended that they be both descriptive and consistent, as above. There is no harm in renaming these files, by the way, as long as the numbers remain constant.
 
 
 ## Compiling from source
