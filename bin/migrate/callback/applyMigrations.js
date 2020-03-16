@@ -6,17 +6,19 @@ const Migrations = require('../migrations'),
       transaction = require('../../transaction'),
       migrationTable = require('../../table/migration');
 
-const { arrayUtilities, asynchronousUtilities, miscellaneousUtilities } = necessary,
-      { log } = miscellaneousUtilities,
+const { arrayUtilities, asynchronousUtilities } = necessary,
       { first } = arrayUtilities,
       { whilst } = asynchronousUtilities,
       { insertVersion, selectMaximumVersion } = migrationTable;
 
 function applyMigrationsCallback(next, done, context) {
-  log.debug('Apply migrations...');
+  const { configuration, migrationsDirectoryPath } = context,
+        migrations = Migrations.fromMigrationsDirectoryPath(migrationsDirectoryPath),
+        { log } = configuration;
 
-  const { migrationsDirectoryPath } = context,
-        migrations = Migrations.fromMigrationsDirectoryPath(migrationsDirectoryPath);
+  if (log) {
+    log.debug('Apply migrations...');
+  }
 
   Object.assign(context, {
     migrations
@@ -32,20 +34,26 @@ function applyMigrationsCallback(next, done, context) {
 module.exports = applyMigrationsCallback;
   
 function applyMigrationCallback(next, done, context) {
-  log.debug('Apply migration...');
-
   const { configuration } = context,
-        operations = [
-          getVersion,
-          applyMigration,
-          updateVersion
-        ];
+        { log } = configuration;
+
+  if (log) {
+    log.debug('Apply migration...');
+  }
+
+  const operations = [
+    getVersion,
+    applyMigration,
+    updateVersion
+  ];
 
   transaction(configuration, operations, (completed) => {
     const error = !completed;
 
     if (error) {
-      log.error('...not completed.');
+      if (log) {
+        log.error('...not completed.');
+      }
 
       Object.assign(context, {
         error
@@ -67,7 +75,11 @@ function applyMigrationCallback(next, done, context) {
 }
 
 function getVersion(connection, abort, proceed, complete, context) {
-  log.debug('Get version....');
+  const { log } = connection;
+
+  if (log) {
+    log.debug('Get version....');
+  }
 
   selectMaximumVersion(connection, (error, rows) => {
     if (error) {
@@ -89,7 +101,11 @@ function getVersion(connection, abort, proceed, complete, context) {
 }
 
 function updateVersion(connection, abort, proceed, complete, context) {
-  log.debug('Update version...');
+  const { log } = connection;
+
+  if (log) {
+    log.debug('Update version...');
+  }
 
   const { version } = context;
 
@@ -103,8 +119,6 @@ function updateVersion(connection, abort, proceed, complete, context) {
 }
 
 function applyMigration(connection, abort, proceed, complete, context) {
-  log.debug('Apply migration...');
-
   let { version, migrations } = context;
 
   delete context.version;
@@ -120,6 +134,12 @@ function applyMigration(connection, abort, proceed, complete, context) {
     complete();
 
     return;
+  }
+
+  const { log } = connection;
+
+  if (log) {
+    log.debug('Apply migration...');
   }
 
   migration.apply(connection, (error) => {

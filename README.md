@@ -265,6 +265,8 @@ migrate(configuration, migrationsDirectoryPath, function(error) {
   ...
 });
 ```
+If you provide a `log` property in the configuration, you must supply it with `info()` and `debug()` functions as well as an `error()` function.
+
 Within the migrations directory there should be a collection of SQL files each containing a single SQL statement that changes the database schema or data in some way, in other words a migration. The naming convention for the SQL files is that they must start with a positive integer followed by a dash. Further, since this pattern is searched for in the fully qualified file path with a regular expression, the migration directory in indeed any of its parent directories cannot have also have it.
 
 Perhaps a list of the first few migration files in an example application will be more helpful:

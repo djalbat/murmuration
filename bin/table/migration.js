@@ -1,23 +1,23 @@
 'use strict';
 
-const necessary = require('necessary');
-
 const database = require('../database'),
       createTableMigrationSQL = require('../sql/migration/createTable'),
       insertVersionMigrationSQL = require('../sql/migration/insertVersion'),
       showLikeTablesMigrationSQL = require('../sql/migration/showLikeTables'),
       selectMaximumVersionMigrationSQL = require('../sql/migration/selectMaximumVersion');
 
-const { miscellaneousUtilities } = necessary,
-      { query, execute } = database,
-      { log } = miscellaneousUtilities;
+const { query, execute } = database;
 
 function createTable(connection, callback) {
   const sql = createTableMigrationSQL;  ///
   
   execute(connection, sql, (error) => {
     if (error) {
-      log.error('createTable() failed.');
+      const { log } = connection;
+
+      if (log) {
+        log.error('createTable() failed.');
+      }
     }
     
     callback(error);
@@ -29,7 +29,11 @@ function insertVersion(connection, version, callback) {
 
   execute(connection, sql, version, (error) => {
     if (error) {
-      log.error('insertVersion() failed.');
+      const { log } = connection;
+
+      if (log) {
+        log.error('insertVersion() failed.');
+      }
     }
 
     callback(error);
@@ -41,7 +45,11 @@ function showLikeTables(connection, callback) {
   
   query(connection, sql, (error, rows) => {
     if (error) {
-      log.error('showLikeTables() failed.');
+      const { log } = connection;
+
+      if (log) {
+        log.error('showLikeTables() failed.');
+      }
     }
     
     callback(error, rows);
@@ -53,7 +61,11 @@ function selectMaximumVersion(connection, callback) {
 
   query(connection, sql, (error, rows) => {
     if (error) {
-      log.error('selectMaximumVersion() failed.');
+      const { log } = connection;
+
+      if (log) {
+        log.error('selectMaximumVersion() failed.');
+      }
     }
 
     callback(error, rows);

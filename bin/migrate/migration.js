@@ -4,8 +4,7 @@ const necessary = require('necessary');
 
 const database = require('../database');
 
-const { arrayUtilities, fileSystemUtilities, miscellaneousUtilities } = necessary,
-      { log } = miscellaneousUtilities,
+const { arrayUtilities, fileSystemUtilities } = necessary,
       { second } = arrayUtilities,
       { readFile } = fileSystemUtilities,
       { execute } = database;
@@ -31,11 +30,14 @@ class Migration {
   }
   
   apply(connection, callback) {
-    const sql = this.getSQL(),
+    const { log } = connection,
+          sql = this.getSQL(),
           version = this.getVersion();
 
-    log.info(`Applying migration version ${version}...`);
-    
+    if (log) {
+      log.info(`Applying migration version ${version}...`);
+    }
+
     execute(connection, sql, (error) => {
       error ?
         log.error(`...failed!`) :

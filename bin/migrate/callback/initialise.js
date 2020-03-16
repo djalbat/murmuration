@@ -1,28 +1,30 @@
 'use strict';
 
-const necessary = require('necessary');
-
 const transaction = require('../../transaction'),
       migrationTable = require('../../table/migration');
 
-const { miscellaneousUtilities } = necessary,
-      { log } = miscellaneousUtilities,
-      { createTable, showLikeTables } = migrationTable;
+const { createTable, showLikeTables } = migrationTable;
 
 function initialiseCallback(next, done, context) {
-  log.debug('Initialise...');
-
   const { configuration } = context,
-        operations = [
-          checkTablePresent,
-          createMissingTable
-        ];
+        { log } = configuration;
+
+  if (log) {
+    log.debug('Initialise...');
+  }
+
+  const operations = [
+    checkTablePresent,
+    createMissingTable
+  ];
 
   transaction(configuration, operations, (completed) => {
     const error = !completed;
 
     if (error) {
-      log.error('...not completed.');
+      if (log) {
+        log.error('...not completed.');
+      }
 
       Object.assign(context, {
         error
@@ -40,7 +42,11 @@ function initialiseCallback(next, done, context) {
 module.exports = initialiseCallback;
 
 function checkTablePresent(connection, abort, proceed, complete, context) {
-  log.debug('Check table present...');
+  const { log } = connection;
+
+  if (log) {
+    log.debug('Check table present...');
+  }
 
   showLikeTables(connection, (error, rows) => {
     if (error) {
@@ -58,7 +64,11 @@ function checkTablePresent(connection, abort, proceed, complete, context) {
 }
 
 function createMissingTable(connection, abort, proceed, complete, context) {
-  log.debug('Create missing table...');
+  const { log } = connection;
+
+  if (log) {
+    log.debug('Create missing table...');
+  }
 
   createTable(connection, (error) => {
     error ?
