@@ -100,19 +100,19 @@ Two functions are provided, namely `query()` and `execute()`. The former returns
 ```js
 const sql = ...;
 
-query(connection, sql, ...values, (error, rows) => {
+query(connection, sql, ...parameters, (error, rows) => {
 
   ...
 
 });
 
-execute(connection, sql, ...values, status, (error) => {
+execute(connection, sql, ...parameters, status, (error) => {
 
   ...
 
 });
 ```
-In both cases, a variable length list of values can be passed between the `sql` and `callback` arguments. These replace the `?`placeholders in the SQL you provide. For example, if the SQL passed to the `query()` function is the the following...
+In both cases, a variable length list of parameters can be passed between the `sql` and `callback` arguments. These replace the `?`placeholders in the SQL you provide. For example, if the SQL passed to the `query()` function is the the following...
 
 ```
 
@@ -135,6 +135,57 @@ query(connection, sql, username, password, (error, rows) => {
 The `execute()` function is treated entirely similarly.
 
 For more information on placeholders and performing queries in general, see the mysql package documentation [here](https://github.com/mysqljs/mysql#performing-queries).
+
+To make use of these functions, it is recommended that you create a file corresponding to each table or view, and name functions to reflect the SQL operation and parameters. THe SQL they employ can be read from files the names of which exactly match the function names. For example:
+
+```js
+const SELECT_USERNAME_FILE_NAME = 'table/user/selectUsername.sql',
+      SELECT_IDENTIFIER_FILE_NAME = 'table/user/selectIdentifier.sql',
+      SELECT_EMAIL_ADDRESS_FILE_NAME = 'table/user/selectEmailAddress.sql',
+      UPDATE_NAME_IDENTIFIER_FILE_NAME = 'table/user/updateNameIdentifier.sql',
+      ...
+      ;
+
+function selectUsername(connection, username, callback) { ... }
+
+function selectIdentifier(connection, identifier, callback) { ... }
+
+function selectEmailAddress(connection, emailAddress, callback) { ... }
+
+function updateNameIdentifier(connection, name, identifier, callback) { ... }
+
+...
+```
+The body of each of the function should be identical bar the parameters and the use of the `query()` versus the `execute()` function:
+
+```js
+function selectEmailAddress(connection, emailAddress, callback) {
+  const filePath = `${SQL_DIRECTORY_PATH}/${SELECT_EMAIL_ADDRESS_FILE_NAME}`,
+        sql = sqlFromFilePath(filePath);
+
+  query(connection, sql, emailAddress, (error, rows) => {
+    if (error) {
+      log.error('selectEmailAddress() failed.');
+    }
+
+    callback(error, rows);
+  });
+}
+
+function updateNameIdentifier(connection, name, identifier, callback) {
+  const filePath = `${SQL_DIRECTORY_PATH}/${UPDATE_NAME_IDENTIFIER_FILE_NAME}`,
+        sql = sqlFromFilePath(filePath);
+
+  execute(connection, sql, name, identifier, (error) => {
+    if (error) {
+      log.error('updateNameIdentifier() failed.');
+    }
+
+    callback(error);
+  });
+}
+```
+Note that the parameters, as well as matching the function name precisely, are passed directly to the `query()` or `execute()` functions. Essentially the only purpose of these functions is to retrieve the SQL, pass it to the requisite function and log an error if it occurs.
 
 ## Compiling from source
 

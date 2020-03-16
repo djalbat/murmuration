@@ -9,10 +9,10 @@ const { fileSystemUtilities } = necessary,
 let pool = null;      
 
 function query(connection, sql, ...remainingArguments) {
-  const values = remainingArguments,
-        callback = values.pop();  ///
+  const parameters = remainingArguments,
+        callback = parameters.pop();  ///
 
-  sql = connection.format(sql, values);
+  sql = connection.format(sql, parameters);
 
   try {
     connection.query(sql, (error, rows) => {
@@ -37,10 +37,10 @@ function query(connection, sql, ...remainingArguments) {
 }
 
 function execute(connection, sql, ...remainingArguments) {
-  const values = remainingArguments,
-        callback = values.pop();  ///
+  const parameters = remainingArguments,
+        callback = parameters.pop();  ///
 
-  sql = connection.format(sql, values);
+  sql = connection.format(sql, parameters);
 
   try {
     connection.query(sql, (error) => {
