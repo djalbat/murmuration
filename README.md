@@ -95,7 +95,7 @@ try {
 
 ### Running queries
 
-Two functions are provided, namely `query()` and `execute()`. The former returns an error and an array of rows returned by the query by way of a callback, the latter only an error. Otherwise their signatures are the same:
+Two functions are provided, namely `query()` and `execute()`. The former returns an error and an array of rows returned by the query by way of a callback, the latter only an error by way of a callback. Otherwise their signatures are the same:
 
 ```js
 const sql = ...;
@@ -122,6 +122,9 @@ In both cases, a variable length list of values can be passed between the `sql` 
 ...you would call the `query()` function thus:
 
 ```js
+const username = ... ,
+      password = ... ;
+
 query(connection, sql, username, password, (error, rows) => {
 
   ...
@@ -131,7 +134,7 @@ query(connection, sql, username, password, (error, rows) => {
 ```
 The `execute()` function is treated entirely similarly.
 
-For more information on placeholders and on queries in general, see the mysql package documentation [here](https://github.com/mysqljs/mysql#performing-queries).
+For more information on placeholders and performing queries in general, see the mysql package documentation [here](https://github.com/mysqljs/mysql#performing-queries).
 
 ## Compiling from source
 
