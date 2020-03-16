@@ -71,9 +71,9 @@ In the event of an error, if a `log` property has been added to the configuratio
 
 * `ETIMEOUT` or `PROTOCOL_SEQUENCE_TIMEOUT` - `'The database server is down, probably.'`
 
-* `ER_PARSE_ERROR` or `ER_BAD_TABLE_ERROR` - In these cases the error code is simply echoed and the offending SQL, if there is any, will be returned in a separate call to the `log.error()` function.
+* `ER_PARSE_ERROR` or `ER_BAD_TABLE_ERROR` - In these cases the error code is simply echoed and the offending SQL, if there is any, will be echoed in a separate call to the `log.error()` function.
 
-These messages are meant to help with debugging simple mistakes such as providing incorrect configuration. If you do not find them helpful, do not provide a `log` object in the configuration and rest assured error codes will be returned by way of the `error` callback argument for you do deal with as you see fit.
+These messages are meant to help with debugging simple mistakes such as providing incorrect configuration. If you do not find them helpful, do not provide a `log` object in the configuration and be assured error codes will be returned by way of the `error` callback argument for you do deal with as you see fit.
 
 If you do choose to set a `log` property on the configuration object then subsequent errors will also be logged. There are no more helpful messages, instead the error code and offending SQL will be echoed.
 
