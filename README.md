@@ -24,8 +24,6 @@ You can also clone the repository with [Git](https://git-scm.com/)...
 
 ## Usage
 
-If you are building with [Node.js](http://nodejs.org) the usage is as follows:
-
 ```js
 const murmuration = require('murmuration'),
       { database, migrate, transaction } = murmuration,
