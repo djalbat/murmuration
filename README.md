@@ -193,14 +193,12 @@ Lastly, it is recommended that you avoid complex queries that span more than one
 
 It is recommended that all database operations are run in the context of transactions. There is a single `transaction()` function that allows you to do this. It takes a `configuration` argument , an `operations` argument , a `callback` argument and a mandatory `context` argument. The callback provided will have a `completed` argument and the context must be a plain old JavaScript object.
 
-In the example below, a list of four operations has been provided and the context has properties that these operations will make use of, as well as a `success` property that each might optionally set:
+The `transaction()` function makes use of the `context` object itself, consequently the object's `connection`, `operations` and `completed` properties are reserved.
+
+In the example below, a list of four operations has been provided and the context has properties that these operations will make use of:
 
 ```js
-const emailAddress = ... ,
-      username = ... ,
-      password = ... ,
-      success = false,
-      configuration = ... ,
+const configuration = ... ,
       operations = [
         checkUsernameAvailable,
         checkEmailAddressAvailable,
@@ -210,8 +208,7 @@ const emailAddress = ... ,
       context = {
         emailAddress,
         username,
-        password,
-        success
+        password
       };
 
 transaction(configuration, operations, (completed) => {
@@ -220,10 +217,7 @@ transaction(configuration, operations, (completed) => {
 
 }, context);
 ```
-
-The `transaction()` function makes use of the `context` object itself, consequently the object's `connection`, `operations` and `completed` properties are reserved.
-
-The signature of the operation functions must be identical to the following example:
+The signature of the operations must be identical to the following example:
 
 ```js
 function checkUsernameAvailable(connection, abort, proceed, complete, context) {
@@ -244,7 +238,7 @@ function checkUsernameAvailable(connection, abort, proceed, complete, context) {
   });
 }
 ```
-
+Note the provision of the `abort()`, `proceed()` and `complete()` callbacks, each of which is used in the operation. Their utility should be self evident.
 
 
 
