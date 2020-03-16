@@ -280,18 +280,19 @@ migration -- -- 1-create-user-table.sql
             |
              -- 5-create-access-table.sql
             |
-             -- 5-alter-access-table-add-user-identifier-foreign-key.sql
+             -- 6-alter-access-table-add-user-identifier-foreign-key.sql
 
             ...
 ```
 Aside from the integer-dash format, there is no specific format for the file names needed, however it is recommended that they be both descriptive and consistent, as above. There is no harm in renaming these files, by the way, as long as the numbers remain constant.
 
-Each time the Node instance on which the application runs is started up, the migration directory will be indexed and any newly added migration files will be run in order. A table is kept with the number of the previously last executed migration in order to facilitate this.
+Each time the Node instance on which the application runs is started up, the migration directory will be read and any newly added migration files will be run in order. A table is kept with the number of the previously last executed migration in order to facilitate this.
 
-It is crucial that any changes to the JavaScript or indeed any parts of the application that rely on a new migration are committed along with it. This ensures that whenever the migration is executed and the database schema or data are changed, that the application is in a fit state to make use of it.
+It is crucial that any changes to the JavaScript or indeed any parts of the application that rely on a new migration are committed along with it. This ensures that whenever the migration is executed and the database schema or data are changed, the application is in a fit state to make use of it.
 
-Migrations must obviously never, ever be changed once they have been committed. If a mistake has been made, it must only be rectified by way of a subsequent migration. When developing migrations, test exhaustively before committing them. You can always at least reverse the effect of a migration by overwriting the database with a dump of the previous version.
+Migrations must obviously never, ever be changed once they have been committed. If a mistake has been made, it must only be rectified by way of a subsequent migration. When developing migrations, test exhaustively before committing them. You can at least reverse the effect of a migration by overwriting the database with a dump of the previous version.
 
+If used with care, this migration functionality is wholly effective in the aforementioned use case of a single database instance allied with one or possibly many application instances.
 
 ## Compiling from source
 
