@@ -59,7 +59,7 @@ The `configuration` argument should be a plain old JavaScript object with at lea
 ```
 The full list of options can be found in the [mysql](https://github.com/mysqljs/mysql) package documentation [here](https://github.com/mysqljs/mysql#connection-options). If successful, the `error` argument of the callback will be falsey and the connection object will be returned, otherwise the `error` argument will be truthy.
 
-In the event of an error, if a `log` option has been provided then the `log.error()` function will be called with a message containing a reasonable stab at the cause of the error. Specifically, the following error codes are mapped to the following messages:
+In the event of an error, if a `log` property has been added to the configuration object then the `log.error()` function will be called with a message containing a reasonable stab at the cause of the error. Specifically, the following error codes are mapped to the following messages:
 
 * `ECONNREFUSED` - `'The database isn\'t running, probably.'`
 
