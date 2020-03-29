@@ -39,9 +39,11 @@ class Migration {
     }
 
     execute(connection, sql, (error) => {
-      error ?
-        log.error(`...failed!`) :
-          log.debug('...success!');
+      if (log) {
+        error ?
+          log.error(`...failed!`) :
+            log.debug('...success!');
+      }
 
       callback(error);
     });

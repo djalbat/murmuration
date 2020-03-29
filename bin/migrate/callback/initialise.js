@@ -3,7 +3,7 @@
 const transaction = require('../../transaction'),
       migrationTable = require('../../table/migration');
 
-const { createTable, showLikeTables } = migrationTable;
+const { createTable, insertVersion, showLikeTables } = migrationTable;
 
 function initialiseCallback(next, done, context) {
   const { configuration } = context,
@@ -15,7 +15,8 @@ function initialiseCallback(next, done, context) {
 
   const operations = [
     checkTablePresent,
-    createMissingTable
+    createMissingTable,
+    insertZeroVersion
   ];
 
   transaction(configuration, operations, (completed) => {
@@ -71,6 +72,22 @@ function createMissingTable(connection, abort, proceed, complete, context) {
   }
 
   createTable(connection, (error) => {
+    error ?
+      abort() :
+        proceed();
+  });
+}
+
+function insertZeroVersion(connection, abort, proceed, complete, context) {
+  const { log } = connection;
+
+  if (log) {
+    log.debug('Inserting zero version...');
+  }
+
+  const version = 0;
+
+  insertVersion(connection, version, (error) => {
     error ?
       abort() :
         proceed();
