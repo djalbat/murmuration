@@ -8,8 +8,6 @@ const createTableMigrationSQL = `
       PRIMARY KEY (\`version\`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-    INSERT INTO \`migration\` () VALUES();
-
 `;
 
 module.exports = createTableMigrationSQL;
