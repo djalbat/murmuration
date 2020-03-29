@@ -6,16 +6,17 @@ const mysql = require('mysql'),
 const { fileSystemUtilities } = necessary,
       { readFile } = fileSystemUtilities;
 
+
+
+
 let pool = null;      
 
 function query(connection, sql, ...remainingArguments) {
   const parameters = remainingArguments,
         callback = parameters.pop();  ///
 
-  sql = connection.format(sql, parameters);
-
   try {
-    connection.query(sql, (error, rows) => {
+    connection.query(sql, parameters, (error, rows) => {
       if (error) {
         logError(connection, error, sql);
 
@@ -40,10 +41,8 @@ function execute(connection, sql, ...remainingArguments) {
   const parameters = remainingArguments,
         callback = parameters.pop();  ///
 
-  sql = connection.format(sql, parameters);
-
   try {
-    connection.query(sql, (error) => {
+    connection.query(sql, parameters, (error) => {
       if (error) {
         logError(connection, error, sql);
       }
@@ -77,6 +76,8 @@ function getConnection(configuration, callback) {
 
       logError(connection, error, sql);
     }
+
+
 
     Object.assign(connection, {
       log
