@@ -1,6 +1,6 @@
 # Murmuration
 
-Migrations and transactions for MariaDB.
+Database connections, transactions and migrations.
 
 Murmuration is meant to be used as alternative to a database [ORM](https://en.wikipedia.org/wiki/Object-relational_mapping). Aside from migrations, it is deliberately simple and low level, in the sense that it provides no more than the bare minimum functionality needed to connect to a MariaDB database and execute queries, optionally in the context of transactions.
 
