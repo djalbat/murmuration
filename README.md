@@ -277,13 +277,6 @@ Migrations must obviously never, ever be changed once they have been committed. 
 
 If used with care, this migration functionality is wholly effective in the aforementioned use case of a single database instance allied with one or possibly many application instances.
 
-## Compiling from source
-
-Automation is done with [npm scripts](https://docs.npmjs.com/misc/scripts), have a look at the `package.json` file. The pertinent commands are:
-
-    npm run build-debug
-    npm run watch-debug
-    
 ## Contact
 
 - james.smith@djalbat.com
