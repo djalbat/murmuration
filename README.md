@@ -29,9 +29,11 @@ You can also clone the repository with [Git](https://git-scm.com/)...
 
     npm install
 
-Remember that it is the aforementioned specific packages that you should install in most cases, however.
+Remember that it is the aforementioned specific packages that you should install in most cases.
 
 ## Usage
+
+Functionality across the specific packages is identical, aside from small differences in configuration and error handling, and is therefore covered here.
 
 ### Getting and releasing connections
 
@@ -49,18 +51,23 @@ Connection.fromConfiguration(configuration, (error, connection) => {
 };
 ```
 
-Generally, the `configuration` argument should be a plain old JavaScript object with at least the following properties:
+If successful, the `error` argument of the callback will be falsey and a connection object will be returned, otherwise the `error` argument will be truthy.
+
+### Logging
+
+Ideally you should include `log` property in the `configuration` object that you pass to the `fromConfiguration()` static method. This should have the following form:
 
 ```
-{
-  host,
-  user,
-  password,
-  database
-}
-
+const log = {
+  trace: () => { ... },
+  debug: () => { ... },
+  info: () => { ... },
+  warning: () => { ... },
+  error: () => { ... },
+  fatal: () => { ... },
+});
 ```
-The full list of options can be found in the [mysql](https://github.com/mysqljs/mysql) package documentation [here](https://github.com/mysqljs/mysql#connection-options). If successful, the `error` argument of the callback will be falsey and the connection object will be returned, otherwise the `error` argument will be truthy.
+Currently only the `error()`, `info()` and `debug()` functions are made use of, but in future others may be utilised. If you do not provide a `log` object, all logging is suppressed.
 
 In the event of an error, if a `log` property has been added to the configuration object then the `log.error()` function will be called with a message containing a reasonable stab at the cause of the error. Specifically, the following error codes are mapped to the following messages:
 
