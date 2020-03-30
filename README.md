@@ -2,6 +2,13 @@
 
 Database connections, transactions and migrations.
 
+There are two specific packages that you should make use of instead this one:
+
+* [murmuration-mariadb](https://github.com/djalbat/murmuration-mariadb)
+* [murmuration-postgresql](https://github.com/djalbat/murmuration-postgresql)
+
+This readme file largely pertains to both, although there are specific instructions also given in readme file for each of the above.
+
 Murmuration is meant to be used as alternative to a database [ORM](https://en.wikipedia.org/wiki/Object-relational_mapping). Aside from migrations, it is deliberately simple and low level, in the sense that it provides no more than the bare minimum functionality needed to connect to a MariaDB database and execute queries, optionally in the context of transactions.
 
 The migration functionality, if used correctly, will guarantee that a Node application's codebase remains in line with the database it relies on, updating the latter each time the former is deployed.
@@ -24,7 +31,7 @@ You can also clone the repository with [Git](https://git-scm.com/)...
 
 ## Usage
 
-```js
+```
 const murmuration = require('murmuration'),
       { database, migrate, transaction } = murmuration,
       { query, execute, getConnection, releaseConnection, sqlFromFilePath } = database;
@@ -36,7 +43,7 @@ const murmuration = require('murmuration'),
 
 The `getConnection()` function takes `configuration` and `callback` arguments whilst the `releaseConnection()` function takes a `connection` argument:
 
-```js
+```
 const configuration = {
         ...
       };
@@ -81,7 +88,7 @@ If you do choose to set a `log` property on the configuration object then subseq
 
 There is an `sqlFromFilePath()` function that essentially does no more than paper over Nodes's own `fs.readFileSync()` function, throwing any native errors:
 
-```js
+```
 const filePath = ... ;
 
 try {
@@ -97,7 +104,7 @@ try {
 
 Two functions are provided, namely `query()` and `execute()`. The former returns an error and an array of rows returned by the query by way of a callback, the latter only an error by way of a callback. Otherwise their signatures are the same:
 
-```js
+```
 const sql = ...;
 
 query(connection, sql, ...parameters, (error, rows) => {
@@ -121,7 +128,7 @@ In both cases, a variable length list of parameters can be passed between the `s
 ```
 ...you would call the `query()` function thus:
 
-```js
+```
 const username = ... ,
       password = ... ;
 
@@ -138,7 +145,7 @@ For more information on placeholders and performing queries in general, see the 
 
 To make use of these functions, it is recommended that you create a file corresponding to each table or view, naming the functions therein to reflect the SQL statements and parameters. The SQL they employ can be read from files, the names of which exactly match the function names. For example:
 
-```js
+```
 const SELECT_USERNAME_FILE_NAME = 'table/user/selectUsername.sql',
       SELECT_IDENTIFIER_FILE_NAME = 'table/user/selectIdentifier.sql',
       SELECT_EMAIL_ADDRESS_FILE_NAME = 'table/user/selectEmailAddress.sql',
@@ -158,7 +165,7 @@ function updateNameIdentifier(connection, name, identifier, callback) { ... }
 ```
 The body of each of the function should be identical bar the parameters and the use of the `query()` versus the `execute()` function:
 
-```js
+```
 function selectEmailAddress(connection, emailAddress, callback) {
   const filePath = `${SQL_DIRECTORY_PATH}/${SELECT_EMAIL_ADDRESS_FILE_NAME}`,
         sql = sqlFromFilePath(filePath);
@@ -195,7 +202,7 @@ Ideally, all database operations should be run in the context of transactions. T
 
 In the example below, four operations has been provided and the context has properties that they will make use of:
 
-```js
+```
 const configuration = ... ,
       operations = [
         checkUsernameAvailable,
@@ -217,7 +224,7 @@ transaction(configuration, operations, (completed) => {
 ```
 The signature of the operations must be identical to the following example:
 
-```js
+```
 function checkUsernameAvailable(connection, abort, proceed, complete, context) {
   const { username } = context;
 
@@ -256,7 +263,7 @@ The migration functionality will definitely not suit every use case, however it 
 
 The `migrate()` function takes the usual `configuration` argument followed by `migrationsDirectoryPath` argument and a `callback` argument.  The callback is invoked with the usual `error` argument, which is truthy if the migrations have succeeded and falsey otherwise.
 
-```js
+```
 const configuration = ... ,
       migrationsDirectoryPath = ... ;  ///
 
