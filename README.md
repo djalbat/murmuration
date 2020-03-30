@@ -37,12 +37,9 @@ Functionality across the specific packages is identical, aside from small differ
 
 ### Getting and releasing connections
 
-The static `fromConfiguration()` method of the `Connection` class takes configuration and callback arguments:
+The static `fromConfiguration()` method of the `Connection` class takes a configuration and a callback argument:
 
 ```
-const configuration = { ... };
-
-
 Connection.fromConfiguration(configuration, (error, connection) => {
 
   ...
@@ -51,11 +48,11 @@ Connection.fromConfiguration(configuration, (error, connection) => {
 };
 ```
 
-If successful, the `error` argument of the callback will be falsey and a connection object will be returned, otherwise the `error` argument will be truthy.
+If successful, the `error` argument of the callback will be falsey and a connection object will be returned, otherwise the `error` argument will be truthy. Details of the format of the `configuration` object can be found in the configuration subsections of specific package readme files.
 
 ### Logging
 
-Ideally you should include `log` property in the `configuration` object that you pass to the `fromConfiguration()` static method. This should have the following form:
+Ideally you should include `log` property in the `configuration` object of the following form:
 
 ```
 const log = {
@@ -67,41 +64,15 @@ const log = {
   fatal: () => { ... },
 });
 ```
-Currently only the `error()`, `info()` and `debug()` functions are made use of, but in future others may be utilised. If you do not provide a `log` object, all logging is suppressed.
+Currently only the `error()`, `info()` and `debug()` functions are made use of, but in future others may be utilised.
 
-In the event of an error, if a `log` property has been added to the configuration object then the `log.error()` function will be called with a message containing a reasonable stab at the cause of the error. Specifically, the following error codes are mapped to the following messages:
+If you do not provide a `log` object, all logging is suppressed.
 
-* `ECONNREFUSED` - `'The database isn\'t running, probably.'`
+### Error handling
 
-* `ENOTFOUND` - `'The host is wrong, probably.'`
-
-* `ER_BAD_DB_ERROR` - `'The database name is wrong, probably.'`
-
-* `ER_ACCESS_DENIED_ERROR` - `'The username or the password are wrong, probably.'`
-
-* `ETIMEOUT` or `PROTOCOL_SEQUENCE_TIMEOUT` - `'The database server is down, probably.'`
-
-* `ER_PARSE_ERROR` or `ER_BAD_TABLE_ERROR` - In these cases the error code is simply echoed and the offending SQL, if there is any, will be echoed in a separate call to the `log.error()` function.
+In the event of an error, if a `log` property has been added to the configuration object then the `log.error()` function will be called with a message containing a reasonable stab at the cause of the error. Details can be found in the subsections of the same name in the specific package readme files.
 
 These messages are meant to help with debugging simple mistakes such as providing incorrect configuration. If you do not find them helpful, do not provide a `log` object in the configuration and be assured error codes will be returned by way of the `error` callback argument for you do deal with as you see fit.
-
-If you do choose to set a `log` property on the configuration object then subsequent errors will also be logged. There are no more helpful messages, instead the error code and offending SQL will be echoed.
-
-### Reading SQL
-
-There is an `sqlFromFilePath()` function that essentially does no more than paper over Nodes's own `fs.readFileSync()` function, throwing any native errors:
-
-```
-const filePath = ... ;
-
-try {
-  const sql = sqlFromFilePath(filePath);
-
-  ...
-} catch (error) {
-  ...
-}
-```
 
 ### Running queries
 
