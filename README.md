@@ -7,13 +7,13 @@ There are two specific packages that you should make use of instead this one:
 * [murmuration-mariadb](https://github.com/djalbat/murmuration-mariadb)
 * [murmuration-postgresql](https://github.com/djalbat/murmuration-postgresql)
 
-This readme file largely pertains to both, although there are specific instructions also given in readme file for each of the above.
+This readme file largely pertains to both, although there are specific instructions also given in readme file for each.
 
-Murmuration is meant to be used as alternative to a database [ORM](https://en.wikipedia.org/wiki/Object-relational_mapping). Aside from migrations, it is deliberately simple and low level, in the sense that it provides no more than the bare minimum functionality needed to connect to a MariaDB database and execute queries, optionally in the context of transactions.
+Murmuration is meant to be used as alternative to a database [ORM](https://en.wikipedia.org/wiki/Object-relational_mapping). Aside from migrations, it is deliberately simple and low level, in the sense that it provides no more than the bare minimum functionality needed to connect to a MariaDB database and run commands, optionally in the context of transactions.
 
 The migration functionality, if used correctly, will guarantee that a Node application's codebase remains in line with the database it relies on, updating the latter each time the former is deployed.
 
-The prescriptions given below are an essential part of the package. They show how to write database utility functions at scale, how to employ them in the context of transactions, and they outline in detail what needs to be done in order to guarantee successful migrations.
+The prescriptions given below are an essential part of the package. They show how to write database utility functions at scale, how to employ them in the context of transactions, and moreover they outline in detail what needs to be done in order to guarantee successful migrations.
 
 ## Installation
 
@@ -29,32 +29,27 @@ You can also clone the repository with [Git](https://git-scm.com/)...
 
     npm install
 
+Remember that it is the aforementioned specific packages that you should install, however.
+
 ## Usage
-
-```
-const murmuration = require('murmuration'),
-      { database, migrate, transaction } = murmuration,
-      { query, execute, getConnection, releaseConnection, sqlFromFilePath } = database;
-
-...
-```
 
 ### Getting and releasing connections
 
-The `getConnection()` function takes `configuration` and `callback` arguments whilst the `releaseConnection()` function takes a `connection` argument:
+The `Connection` class's static ``fromConfiguration()` method takes configuration and callback arguments:
 
 ```
-const configuration = {
-        ...
-      };
+const configuration = { ... };
 
-getConnection(configuration, (error, connection) => {
+
+Connection.fromConfiguration(configuration, (error, connection) => {
+
   ...
 
-  releaseConnection(connection);
-});
+  connection.release();
+};
 ```
-The `configuration` argument should be a plain old JavaScript object with at least the following properties:
+
+Generally, the `configuration` argument should be a plain old JavaScript object with at least the following properties:
 
 ```
 {
@@ -63,6 +58,7 @@ The `configuration` argument should be a plain old JavaScript object with at lea
   password,
   database
 }
+
 ```
 The full list of options can be found in the [mysql](https://github.com/mysqljs/mysql) package documentation [here](https://github.com/mysqljs/mysql#connection-options). If successful, the `error` argument of the callback will be falsey and the connection object will be returned, otherwise the `error` argument will be truthy.
 
