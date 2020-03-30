@@ -7,13 +7,13 @@ There are two specific packages that you should make use of instead this one:
 * [murmuration-mariadb](https://github.com/djalbat/murmuration-mariadb)
 * [murmuration-postgresql](https://github.com/djalbat/murmuration-postgresql)
 
-This readme file largely pertains to both, although there are specific instructions also given in readme file for each.
+This readme file largely pertains to both, although there are also specific instructions given in readme file for each.
 
-Murmuration is meant to be used as alternative to a database [ORM](https://en.wikipedia.org/wiki/Object-relational_mapping). Aside from migrations, it is deliberately simple and low level, in the sense that it provides no more than the bare minimum functionality needed to connect to a MariaDB database and run commands, optionally in the context of transactions.
+Murmuration is meant to be used as alternative to a database [ORM](https://en.wikipedia.org/wiki/Object-relational_mapping). Aside from migrations, it is deliberately simple and low level, in the sense that it provides no more than the bare minimum functionality needed to connect to a database and run commands, optionally in the context of transactions.
 
 The migration functionality, if used correctly, will guarantee that a Node application's codebase remains in line with the database it relies on, updating the latter each time the former is deployed.
 
-The prescriptions given below are an essential part of the package. They show how to write database utility functions at scale, how to employ them in the context of transactions, and moreover they outline in detail what needs to be done in order to guarantee successful migrations.
+The prescriptions given below are an essential part of the package. They show how to write database utility functions at scale, how to employ them in the context of transactions, and moreover they outline what needs to be done in order to guarantee successful migrations.
 
 ## Installation
 
