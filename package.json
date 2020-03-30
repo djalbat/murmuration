@@ -1,7 +1,7 @@
 {
-  "name": "murmuration",
+  "name": "-murmuration",
   "author": "James Smith",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT, Anti-996",
   "homepage": "https://github.com/djalbat/murmuration",
   "description": "Migrations and transactions for MariaDB.",
@@ -14,5 +14,8 @@
     "necessary": "^4.0.7"
   },
   "devDependencies": {},
-  "scripts": {}
+  "scripts": {
+    "build": " ",
+    "build-debug": " "
+  }
 }
