@@ -48,11 +48,11 @@ Connection.fromConfiguration(configuration, (error, connection) => {
 };
 ```
 
-If successful, the `error` argument of the callback will be falsey and a connection object will be returned, otherwise the `error` argument will be truthy. Details of the format of the `configuration` object can be found in the configuration subsections of specific package readme files.
+If successful, the `error` argument of the callback will be falsey and a `connection` object will be returned, otherwise the `error` argument will be truthy. Details of the format of the `configuration` object can be found in the configuration subsections of the specific package readme files.
 
 ### Logging
 
-Ideally you should include `log` property in the `configuration` object of the following form:
+Ideally you should add a `log` property to the `configuration` referencing an object of the following form:
 
 ```
 const log = {
@@ -70,16 +70,16 @@ If you do not provide a `log` object, all logging is suppressed.
 
 ### Error handling
 
-In the event of an error, if a `log` property has been added to the configuration object then the `log.error()` function will be called with a message containing a reasonable stab at the cause of the error. Details can be found in the subsections of the same name in the specific package readme files.
+In the event of an error, if a `log` property has been added to the `configuration` object then the `log.error()` function will be called with a message containing a reasonable stab at the cause of the error. Details can be found in the subsections of the same name in the specific package readme files.
 
-These messages are meant to help with debugging simple mistakes such as providing incorrect configuration. If you do not find them helpful, do not provide a `log` object in the configuration and be assured error codes will be returned by way of the `error` callback argument for you do deal with as you see fit.
+These messages are meant to help with debugging simple mistakes such as providing incorrect configuration. If you do not find them helpful, do not provide a `log` object and be assured that the errors are always returned by way of callback function arguments for you to deal with as you see fit.
 
 ### Running queries
 
 Two functions are provided, namely `query()` and `execute()`. The former returns an error and an array of rows returned by the query by way of a callback, the latter only an error by way of a callback. Otherwise their signatures are the same:
 
 ```
-const sql = ...;
+const sql = ... ;
 
 query(connection, sql, ...parameters, (error, rows) => {
 
@@ -93,14 +93,14 @@ execute(connection, sql, ...parameters, status, (error) => {
 
 });
 ```
-In both cases, a variable length list of parameters can be passed between the `sql` and `callback` arguments. These replace the `?`placeholders in the SQL you provide. For example, if the SQL passed to the `query()` function is the the following...
+In both cases, a variable length list of parameters can be passed between the `sql` and `callback` arguments. These replace the `?`placeholders in the SQL you provide. For example, if the SQL passed to the `query()` function is the following...
 
 ```
 
   SELECT * FROM `user` WHERE `username`=? and `password`=MD5(?);
 
 ```
-...you would call the `query()` function thus:
+...then you would call the `query()` function thus:
 
 ```
 const username = ... ,
