@@ -75,13 +75,15 @@ function applyMigrationCallback(next, done, context) {
 }
 
 function getVersion(connection, abort, proceed, complete, context) {
-  const { log } = connection;
+  const { configuration } = context,
+        { migrationSQLMap } = configuration,
+        { selectMaximumVersionMigrationSQL } = migrationSQLMap,
+        sql = selectMaximumVersionMigrationSQL, ///
+        log = connection.getLog();
 
-  if (log) {
-    log.debug('Get version....');
-  }
+  log.debug('Get version....');
 
-  selectMaximumVersion(connection, (error, rows) => {
+  selectMaximumVersion(connection, sql, (error, rows) => {
     if (error) {
       abort();
 
@@ -101,17 +103,19 @@ function getVersion(connection, abort, proceed, complete, context) {
 }
 
 function updateVersion(connection, abort, proceed, complete, context) {
-  const { log } = connection;
+  const { configuration } = context,
+        { migrationSQLMap } = configuration,
+        { insertVersionMigrationSQL } = migrationSQLMap,
+        sql = insertVersionMigrationSQL,  ///
+        log = connection.getLog();
 
-  if (log) {
-    log.debug('Update version...');
-  }
+  log.debug('Update version...');
 
   const { version } = context;
 
   delete context.version;
 
-  insertVersion(connection, version, (error) => {
+  insertVersion(connection, version, sql, (error) => {
     error ?
       abort() :
         proceed();
@@ -136,11 +140,9 @@ function applyMigration(connection, abort, proceed, complete, context) {
     return;
   }
 
-  const { log } = connection;
+  const log = connection.getLog();
 
-  if (log) {
-    log.debug('Apply migration...');
-  }
+  log.debug('Apply migration...');
 
   migration.apply(connection, (error) => {
     if (error) {

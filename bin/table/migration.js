@@ -1,71 +1,51 @@
 'use strict';
 
-const database = require('../database'),
-      createTableMigrationSQL = require('../sql/migration/createTable'),
-      insertVersionMigrationSQL = require('../sql/migration/insertVersion'),
-      showLikeTablesMigrationSQL = require('../sql/migration/showLikeTables'),
-      selectMaximumVersionMigrationSQL = require('../sql/migration/selectMaximumVersion');
+const database = require('../database');
 
 const { query, execute } = database;
 
-function createTable(connection, callback) {
-  const sql = createTableMigrationSQL;  ///
-  
+function createTable(connection, sql, callback) {
   execute(connection, sql, (error) => {
     if (error) {
-      const { log } = connection;
+      const log = connection.getLog();
 
-      if (log) {
-        log.error('createTable() failed.');
-      }
+      log.error('createTable() failed.');
     }
     
     callback(error);
   });
 }
 
-function insertVersion(connection, version, callback) {
-  const sql = insertVersionMigrationSQL;  ///
-
+function insertVersion(connection, version, sql, callback) {
   execute(connection, sql, version, (error) => {
     if (error) {
-      const { log } = connection;
+      const log = connection.getLog();
 
-      if (log) {
-        log.error('insertVersion() failed.');
-      }
+      log.error('insertVersion() failed.');
     }
 
     callback(error);
   });
 }
 
-function showLikeTables(connection, callback) {
-  const sql = showLikeTablesMigrationSQL; ///
-  
+function showLikeTables(connection, sql, callback) {
   query(connection, sql, (error, rows) => {
     if (error) {
-      const { log } = connection;
+      const log = connection.getLog();
 
-      if (log) {
-        log.error('showLikeTables() failed.');
-      }
+      log.error('showLikeTables() failed.');
     }
     
     callback(error, rows);
   });
 }
 
-function selectMaximumVersion(connection, callback) {
-  const sql = selectMaximumVersionMigrationSQL; ///
-
+function selectMaximumVersion(connection, sql, callback) {
   query(connection, sql, (error, rows) => {
     if (error) {
-      const { log } = connection;
+      const log = connection.getLog();
 
-      if (log) {
-        log.error('selectMaximumVersion() failed.');
-      }
+      log.error('selectMaximumVersion() failed.');
     }
 
     callback(error, rows);

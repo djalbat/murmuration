@@ -30,20 +30,16 @@ class Migration {
   }
   
   apply(connection, callback) {
-    const { log } = connection,
+    const log = connection.getLog(),
           sql = this.getSQL(),
           version = this.getVersion();
 
-    if (log) {
-      log.info(`Applying migration version ${version}...`);
-    }
+    log.info(`Applying migration version ${version}...`);
 
     execute(connection, sql, (error) => {
-      if (log) {
-        error ?
-          log.error(`...failed!`) :
-            log.debug('...success!');
-      }
+      error ?
+        log.error(`...failed!`) :
+          log.debug('...success!');
 
       callback(error);
     });

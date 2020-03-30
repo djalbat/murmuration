@@ -2,14 +2,12 @@
 
 const necessary = require('necessary');
 
-const database = require('./database');
-
 const { asynchronousUtilities } = necessary,
-      { whilst, sequence } = asynchronousUtilities,
-      { getConnection, releaseConnection } = database;
+      { whilst, sequence } = asynchronousUtilities;
       
 function transaction(configuration, operations, callback, context) {
-  const completed = false,
+  const { Connection } = configuration,
+        completed = false,
         callbacks = [
           beginTransactionCallback,
           executeOperationsCallback,
@@ -17,13 +15,11 @@ function transaction(configuration, operations, callback, context) {
           rollbackTransactionCallback
         ];
 
-  getConnection(configuration, (error, connection) => {
+  Connection.fromConfiguration(configuration, (error, connection) => {
     if (error) {
-      const { log } = configuration;
+      const log = connection.getLog();
 
-      if (log) {
-        log.error('The transaction wasn\'t completed because there was no connection.');
-      }
+      log.error('The transaction wasn\'t completed because there was no connection.');
 
       callback(completed);
 
@@ -43,7 +39,7 @@ function transaction(configuration, operations, callback, context) {
       delete context.operations;
       delete context.completed;
 
-      releaseConnection(connection);
+      connection.release();
 
       callback(completed);
     }, context);
@@ -55,19 +51,15 @@ module.exports = transaction;
 
 function beginTransactionCallback(next, done, context) {
   const { connection } = context,
-        { log } = connection;
+        log = connection.getLog();
 
-  if (log) {
-    log.debug('Beginning transaction...');
-  }
+  log.debug('Beginning transaction...');
 
-  connection.beginTransaction((error) => {
+  connection.begin((error) => {
     if (error) {
       const { code } = error;
 
-      if (log) {
-        log.error(`An error with '${code}' has occurred.`);
-      }
+      log.error(`An error with '${code}' has occurred.`);
 
       done();
 
@@ -88,19 +80,15 @@ function commitTransactionCallback(next, done, context) {
   }
 
   const { connection } = context,
-        { log } = connection;
+        log = connection.getLog();
 
-  if (log) {
-    log.debug('Committing transaction...');
-  }
+  log.debug('Committing transaction...');
 
   connection.commit((error) => {
     if (error) {
       const { code } = error;
 
-      if (log) {
-        log.error(`An error with '${code}' has occurred.`);
-      }
+      log.error(`An error with '${code}' has occurred.`);
 
       done();
 
@@ -121,19 +109,15 @@ function rollbackTransactionCallback(next, done, context) {
   }
 
   const { connection } = context,
-        { log } = connection;
+        log = connection.getLog();
 
-  if (log) {
-    log.debug('Rolling back transaction...');
-  }
+  log.debug('Rolling back transaction...');
 
   connection.rollback((error) => {
     if (error) {
       const { code } = error;
 
-      if (log) {
-        log.error(`...failed with error code ${code}.`);
-      }
+      log.error(`...failed with error code ${code}.`);
 
       done();
 
@@ -160,11 +144,9 @@ function executeOperation(next, done, context, index) {
   }
 
   const { connection } = context,
-        { log } = connection;
+        log = connection.getLog();
 
-  if (log) {
-    log.debug('Executing operation...');
-  }
+  log.debug('Executing operation...');
 
   const operation = operations[index],
         abort = done, ///

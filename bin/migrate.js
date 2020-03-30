@@ -23,12 +23,6 @@ function migrate(configuration, migrationsDirectoryPath, callback) {
   sequence(callbacks, () => {
     const { error } = context;
 
-    delete context.error;
-
-    delete context.configuration;
-
-    delete context.migrationsDirectoryPath;
-
     callback(error);
   }, context);
 }

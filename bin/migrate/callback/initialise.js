@@ -43,13 +43,15 @@ function initialiseCallback(next, done, context) {
 module.exports = initialiseCallback;
 
 function checkTablePresent(connection, abort, proceed, complete, context) {
-  const { log } = connection;
+  const { configuration } = context,
+        { migrationSQLMap } = configuration,
+        { showLikeTablesMigrationSQL } = migrationSQLMap,
+        sql = showLikeTablesMigrationSQL, ///
+        log = connection.getLog();
 
-  if (log) {
-    log.debug('Check table present...');
-  }
+  log.debug('Check table present...');
 
-  showLikeTables(connection, (error, rows) => {
+  showLikeTables(connection, sql, (error, rows) => {
     if (error) {
       abort();
 
@@ -65,13 +67,15 @@ function checkTablePresent(connection, abort, proceed, complete, context) {
 }
 
 function createMissingTable(connection, abort, proceed, complete, context) {
-  const { log } = connection;
+  const { configuration } = context,
+        { migrationSQLMap } = configuration,
+        { createTableMigrationSQL } = migrationSQLMap,
+        sql = createTableMigrationSQL, ///
+        log = connection.getLog();
 
-  if (log) {
-    log.debug('Create missing table...');
-  }
+  log.debug('Create missing table...');
 
-  createTable(connection, (error) => {
+  createTable(connection, sql, (error) => {
     error ?
       abort() :
         proceed();
@@ -79,15 +83,17 @@ function createMissingTable(connection, abort, proceed, complete, context) {
 }
 
 function insertZeroVersion(connection, abort, proceed, complete, context) {
-  const { log } = connection;
+  const { configuration } = context,
+        { migrationSQLMap } = configuration,
+        { insertVersionMigrationSQL } = migrationSQLMap,
+        sql = insertVersionMigrationSQL,  ///
+        log = connection.getLog();
 
-  if (log) {
-    log.debug('Inserting zero version...');
-  }
+  log.debug('Inserting zero version...');
 
   const version = 0;
 
-  insertVersion(connection, version, (error) => {
+  insertVersion(connection, version, sql, (error) => {
     error ?
       abort() :
         proceed();
