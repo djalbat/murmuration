@@ -29,13 +29,13 @@ You can also clone the repository with [Git](https://git-scm.com/)...
 
     npm install
 
-Remember that it is the aforementioned specific packages that you should install, however.
+Remember that it is the aforementioned specific packages that you should install in most cases, however.
 
 ## Usage
 
 ### Getting and releasing connections
 
-The `Connection` class's static ``fromConfiguration()` method takes configuration and callback arguments:
+The static `fromConfiguration()` method of the `Connection` class takes configuration and callback arguments:
 
 ```
 const configuration = { ... };
