@@ -93,29 +93,7 @@ execute(connection, sql, ...parameters, status, (error) => {
 
 });
 ```
-In both cases, a variable length list of parameters can be passed between the `sql` and `callback` arguments. These replace the `?`placeholders in the SQL you provide. For example, if the SQL passed to the `query()` function is the following...
-
-```
-
-  SELECT * FROM `user` WHERE `username`=? and `password`=MD5(?);
-
-```
-...then you would call the `query()` function thus:
-
-```
-const username = ... ,
-      password = ... ;
-
-query(connection, sql, username, password, (error, rows) => {
-
-  ...
-
-});
-
-```
-The `execute()` function is treated entirely similarly.
-
-For more information on placeholders and performing queries in general, see the mysql package documentation [here](https://github.com/mysqljs/mysql#performing-queries).
+In both cases, a variable length list of parameters can be passed between the `sql` and `callback` arguments. These replace the placeholders in the SQL you provide. For more information, see the specific packages.
 
 To make use of these functions, it is recommended that you create a file corresponding to each table or view, naming the functions therein to reflect the SQL statements and parameters. The SQL they employ can be read from files, the names of which exactly match the function names. For example:
 
