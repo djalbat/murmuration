@@ -98,10 +98,10 @@ In both cases, a variable length list of parameters can be passed between the `s
 To make use of these functions, it is recommended that you create a file corresponding to each table or view, naming the functions therein to reflect the SQL statements and parameters. The SQL they employ can be read from files, the names of which exactly match the function names. For example:
 
 ```
-const SELECT_USERNAME_FILE_NAME = 'table/user/selectUsername.sql',
-      SELECT_IDENTIFIER_FILE_NAME = 'table/user/selectIdentifier.sql',
-      SELECT_EMAIL_ADDRESS_FILE_NAME = 'table/user/selectEmailAddress.sql',
-      UPDATE_NAME_IDENTIFIER_FILE_NAME = 'table/user/updateNameIdentifier.sql',
+const SELECT_USERNAME_FILE_NAME = "table/user/selectUsername.sql",
+      SELECT_IDENTIFIER_FILE_NAME = "table/user/selectIdentifier.sql",
+      SELECT_EMAIL_ADDRESS_FILE_NAME = "table/user/selectEmailAddress.sql",
+      UPDATE_NAME_IDENTIFIER_FILE_NAME = "table/user/updateNameIdentifier.sql",
       ...
       ;
 
@@ -124,7 +124,7 @@ function selectEmailAddress(connection, emailAddress, callback) {
 
   query(connection, sql, emailAddress, (error, rows) => {
     if (error) {
-      log.error('selectEmailAddress() failed.');
+      log.error("selectEmailAddress() failed.");
     }
 
     callback(error, rows);
@@ -137,7 +137,7 @@ function updateNameIdentifier(connection, name, identifier, callback) {
 
   execute(connection, sql, name, identifier, (error) => {
     if (error) {
-      log.error('updateNameIdentifier() failed.');
+      log.error("updateNameIdentifier() failed.");
     }
 
     callback(error);
