@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-const database = require('../database');
+const database = require("../database");
 
 const { query, execute } = database;
 
@@ -9,7 +9,7 @@ function createTable(connection, sql, callback) {
     if (error) {
       const log = connection.getLog();
 
-      log.error('createTable() failed.');
+      log.error("createTable() failed.");
     }
     
     callback(error);
@@ -21,7 +21,7 @@ function insertVersion(connection, version, sql, callback) {
     if (error) {
       const log = connection.getLog();
 
-      log.error('insertVersion() failed.');
+      log.error("insertVersion() failed.");
     }
 
     callback(error);
@@ -33,7 +33,7 @@ function showLikeTables(connection, sql, callback) {
     if (error) {
       const log = connection.getLog();
 
-      log.error('showLikeTables() failed.');
+      log.error("showLikeTables() failed.");
     }
     
     callback(error, rows);
@@ -45,7 +45,7 @@ function selectMaximumVersion(connection, sql, callback) {
     if (error) {
       const log = connection.getLog();
 
-      log.error('selectMaximumVersion() failed.');
+      log.error("selectMaximumVersion() failed.");
     }
 
     callback(error, rows);

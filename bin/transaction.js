@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-const necessary = require('necessary');
+const necessary = require("necessary");
 
 const { asynchronousUtilities } = necessary,
       { whilst, sequence } = asynchronousUtilities;
@@ -19,7 +19,7 @@ function transaction(configuration, operations, callback, context) {
     if (error) {
       const log = connection.getLog();
 
-      log.error('The transaction wasn\'t completed because there was no connection.');
+      log.error("The transaction wasn't completed because there was no connection.");
 
       callback(completed);
 
@@ -53,7 +53,7 @@ function beginTransactionCallback(next, done, context) {
   const { connection } = context,
         log = connection.getLog();
 
-  log.debug('Beginning transaction...');
+  log.debug("Beginning transaction...");
 
   connection.begin((error) => {
     if (error) {
@@ -82,13 +82,13 @@ function commitTransactionCallback(next, done, context) {
   const { connection } = context,
         log = connection.getLog();
 
-  log.debug('Committing transaction...');
+  log.debug("Committing transaction...");
 
   connection.commit((error) => {
     if (error) {
       const { code } = error;
 
-      log.error(`An error with '${code}' has occurred.`);
+      log.error("An error with '${code}' has occurred.");
 
       done();
 
@@ -111,7 +111,7 @@ function rollbackTransactionCallback(next, done, context) {
   const { connection } = context,
         log = connection.getLog();
 
-  log.debug('Rolling back transaction...');
+  log.debug("Rolling back transaction...");
 
   connection.rollback((error) => {
     if (error) {
@@ -146,7 +146,7 @@ function executeOperation(next, done, context, index) {
   const { connection } = context,
         log = connection.getLog();
 
-  log.debug('Executing operation...');
+  log.debug("Executing operation...");
 
   const operation = operations[index],
         abort = done, ///

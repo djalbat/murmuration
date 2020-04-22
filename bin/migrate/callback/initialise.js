@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-const transaction = require('../../transaction'),
-      migrationTable = require('../../table/migration');
+const transaction = require("../../transaction"),
+      migrationTable = require("../../table/migration");
 
 const { createTable, insertVersion, showLikeTables } = migrationTable;
 
@@ -10,7 +10,7 @@ function initialiseCallback(next, done, context) {
         { log } = configuration;
 
   if (log) {
-    log.debug('Initialise...');
+    log.debug("Initialise...");
   }
 
   const operations = [
@@ -24,7 +24,7 @@ function initialiseCallback(next, done, context) {
 
     if (error) {
       if (log) {
-        log.error('...not completed.');
+        log.error("...not completed.");
       }
 
       Object.assign(context, {
@@ -49,7 +49,7 @@ function checkTablePresent(connection, abort, proceed, complete, context) {
         sql = showLikeTablesMigrationSQL, ///
         log = connection.getLog();
 
-  log.debug('Check table present...');
+  log.debug("Check table present...");
 
   showLikeTables(connection, sql, (error, rows) => {
     if (error) {
@@ -73,7 +73,7 @@ function createMissingTable(connection, abort, proceed, complete, context) {
         sql = createTableMigrationSQL, ///
         log = connection.getLog();
 
-  log.debug('Create missing table...');
+  log.debug("Create missing table...");
 
   createTable(connection, sql, (error) => {
     error ?
@@ -89,7 +89,7 @@ function insertZeroVersion(connection, abort, proceed, complete, context) {
         sql = insertVersionMigrationSQL,  ///
         log = connection.getLog();
 
-  log.debug('Inserting zero version...');
+  log.debug("Inserting zero version...");
 
   const version = 0;
 

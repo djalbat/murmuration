@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
-const necessary = require('necessary');
+const necessary = require("necessary");
 
-const Migrations = require('../migrations'),
-      transaction = require('../../transaction'),
-      migrationTable = require('../../table/migration');
+const Migrations = require("../migrations"),
+      transaction = require("../../transaction"),
+      migrationTable = require("../../table/migration");
 
 const { arrayUtilities, asynchronousUtilities } = necessary,
       { first } = arrayUtilities,
@@ -17,7 +17,7 @@ function applyMigrationsCallback(next, done, context) {
         { log } = configuration;
 
   if (log) {
-    log.debug('Apply migrations...');
+    log.debug("Apply migrations...");
   }
 
   Object.assign(context, {
@@ -38,7 +38,7 @@ function applyMigrationCallback(next, done, context) {
         { log } = configuration;
 
   if (log) {
-    log.debug('Apply migration...');
+    log.debug("Apply migration...");
   }
 
   const operations = [
@@ -52,7 +52,7 @@ function applyMigrationCallback(next, done, context) {
 
     if (error) {
       if (log) {
-        log.error('...not completed.');
+        log.error("...not completed.");
       }
 
       Object.assign(context, {
@@ -81,7 +81,7 @@ function getVersion(connection, abort, proceed, complete, context) {
         sql = selectMaximumVersionMigrationSQL, ///
         log = connection.getLog();
 
-  log.debug('Get version....');
+  log.debug("Get version....");
 
   selectMaximumVersion(connection, sql, (error, rows) => {
     if (error) {
@@ -109,7 +109,7 @@ function updateVersion(connection, abort, proceed, complete, context) {
         sql = insertVersionMigrationSQL,  ///
         log = connection.getLog();
 
-  log.debug('Update version...');
+  log.debug("Update version...");
 
   const { version } = context;
 
@@ -142,7 +142,7 @@ function applyMigration(connection, abort, proceed, complete, context) {
 
   const log = connection.getLog();
 
-  log.debug('Apply migration...');
+  log.debug("Apply migration...");
 
   migration.apply(connection, (error) => {
     if (error) {

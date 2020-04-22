@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-const necessary = require('necessary');
+const necessary = require("necessary");
 
-const database = require('../database');
+const database = require("../database");
 
 const { arrayUtilities, fileSystemUtilities } = necessary,
       { second } = arrayUtilities,
@@ -38,8 +38,8 @@ class Migration {
 
     execute(connection, sql, (error) => {
       error ?
-        log.error(`...failed!`) :
-          log.debug('...success!');
+        log.error("...failed!") :
+          log.debug("...success!");
 
       callback(error);
     });

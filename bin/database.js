@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 function query(connection, sql, ...remainingArguments) {
   const parameters = remainingArguments,

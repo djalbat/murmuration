@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
-const necessary = require('necessary');
+const necessary = require("necessary");
 
-const initialiseCallback = require('./migrate/callback/initialise'),
-      applyMigrationsCallback = require('./migrate/callback/applyMigrations');
+const initialiseCallback = require("./migrate/callback/initialise"),
+      applyMigrationsCallback = require("./migrate/callback/applyMigrations");
 
 const { asynchronousUtilities } = necessary,
       { sequence } = asynchronousUtilities;

@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-const necessary = require('necessary');
+const necessary = require("necessary");
 
-const Migration = require('./migration');
+const Migration = require("./migration");
 
 const { pathUtilities, fileSystemUtilities } = necessary,
       { readDirectory } = fileSystemUtilities,
