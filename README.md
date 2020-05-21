@@ -180,7 +180,7 @@ The signature of the operations must be identical to the following example:
 function checkUsernameAvailable(connection, abort, proceed, complete, context) {
   const { username } = context;
 
-  selectUsername(connection, username, function(error, rows) {
+  selectUsername(connection, username, (error, rows) => {
     if (error) {
       abort();
 
@@ -219,7 +219,7 @@ The `migrate()` function takes the usual `configuration` argument followed by `m
 const configuration = ... ,
       migrationsDirectoryPath = ... ;  ///
 
-migrate(configuration, migrationsDirectoryPath, function(error) {
+migrate(configuration, migrationsDirectoryPath, (error) => {
 
   ...
 });
