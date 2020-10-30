@@ -48,7 +48,7 @@ Connection.fromConfiguration(configuration, (error, connection) => {
 };
 ```
 
-If successful, the `error` argument of the callback will be falsey and a `connection` object will be returned, otherwise the `error` argument will be truthy. Details of the format of the `configuration` object can be found in the configuration subsections of the specific package readme files.
+If successful, the `error` argument of the callback will be null and a `connection` object will be returned, otherwise the `error` argument will be truthy. Details of the format of the `configuration` object can be found in the configuration subsections of the specific package readme files.
 
 ### Logging
 
