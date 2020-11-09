@@ -52,7 +52,7 @@ If successful, the `error` argument of the callback will be null and a `connecti
 
 ### Logging
 
-Ideally you should add a `log` property to the `configuration` referencing an object of the following form:
+Ideally you should add a `log` property to the `configuration` object that references an object of the following form:
 
 ```
 const log = {

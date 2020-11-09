@@ -2,6 +2,8 @@
 
 const necessary = require("necessary");
 
+const defaultLog = require("./defaultLog");
+
 const { asynchronousUtilities } = necessary,
       { whilst, sequence } = asynchronousUtilities;
       
@@ -17,7 +19,7 @@ function transaction(configuration, operations, callback, context) {
 
   Connection.fromConfiguration(configuration, (error, connection) => {
     if (error) {
-      const log = connection.getLog();
+      const { log = defaultLog } = configuration;
 
       log.error("The transaction wasn't completed because there was no connection.");
 
