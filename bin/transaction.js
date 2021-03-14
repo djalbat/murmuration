@@ -1,11 +1,10 @@
 "use strict";
 
-const necessary = require("necessary");
-
 const defaultLog = require("./defaultLog");
 
-const { asynchronousUtilities } = necessary,
-      { whilst, sequence } = asynchronousUtilities;
+const { asynchronousUtilities } = require("necessary");
+
+const { whilst, sequence } = asynchronousUtilities;
       
 function transaction(configuration, operations, callback, context) {
   const { Connection } = configuration,

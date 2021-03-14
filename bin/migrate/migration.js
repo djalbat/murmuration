@@ -1,13 +1,11 @@
 "use strict";
 
-const necessary = require("necessary");
+const { arrayUtilities, fileSystemUtilities } = require("necessary");
 
-const database = require("../database");
+const { execute } = require("../database");
 
-const { arrayUtilities, fileSystemUtilities } = necessary,
-      { second } = arrayUtilities,
-      { readFile } = fileSystemUtilities,
-      { execute } = database;
+const { second } = arrayUtilities,
+      { readFile } = fileSystemUtilities;
 
 class Migration {
   constructor(filePath) {

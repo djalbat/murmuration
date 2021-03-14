@@ -1,11 +1,10 @@
 "use strict";
 
-const necessary = require("necessary");
+const { pathUtilities, fileSystemUtilities } = require("necessary");
 
 const Migration = require("./migration");
 
-const { pathUtilities, fileSystemUtilities } = necessary,
-      { readDirectory } = fileSystemUtilities,
+const { readDirectory } = fileSystemUtilities,
       { concatenatePaths } = pathUtilities;
 
 class Migrations {

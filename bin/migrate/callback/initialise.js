@@ -1,9 +1,8 @@
 "use strict";
 
-const transaction = require("../../transaction"),
-      migrationTable = require("../../table/migration");
+const transaction = require("../../transaction");
 
-const { createTable, insertVersion, showLikeTables } = migrationTable;
+const { createTable, insertVersion, showLikeTables } = require("../../table/migration");
 
 function initialiseCallback(next, done, context) {
   const { configuration } = context,

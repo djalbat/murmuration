@@ -1,12 +1,11 @@
 "use strict";
 
-const necessary = require("necessary");
-
 const initialiseCallback = require("./migrate/callback/initialise"),
       applyMigrationsCallback = require("./migrate/callback/applyMigrations");
 
-const { asynchronousUtilities } = necessary,
-      { sequence } = asynchronousUtilities;
+const { asynchronousUtilities } = require("necessary");
+
+const { sequence } = asynchronousUtilities;
 
 function migrate(configuration, migrationsDirectoryPath, callback) {
   const callbacks = [

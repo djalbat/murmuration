@@ -1,15 +1,14 @@
 "use strict";
 
-const necessary = require("necessary");
+const { arrayUtilities, asynchronousUtilities } = require("necessary");
 
 const Migrations = require("../migrations"),
-      transaction = require("../../transaction"),
-      migrationTable = require("../../table/migration");
+      transaction = require("../../transaction");
 
-const { arrayUtilities, asynchronousUtilities } = necessary,
-      { first } = arrayUtilities,
-      { whilst } = asynchronousUtilities,
-      { insertVersion, selectMaximumVersion } = migrationTable;
+const { insertVersion, selectMaximumVersion } = require("../../table/migration");
+
+const { first } = arrayUtilities,
+      { whilst } = asynchronousUtilities;
 
 function applyMigrationsCallback(next, done, context) {
   const { configuration, migrationsDirectoryPath } = context,

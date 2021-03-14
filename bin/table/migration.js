@@ -1,8 +1,6 @@
 "use strict";
 
-const database = require("../database");
-
-const { query, execute } = database;
+const { query, execute } = require("../database");
 
 function createTable(connection, sql, callback) {
   execute(connection, sql, (error) => {
