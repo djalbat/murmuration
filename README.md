@@ -258,4 +258,3 @@ If used with care, this migration functionality is wholly effective in the afore
 ## Contact
 
 - james.smith@djalbat.com
-- http://djalbat.com
