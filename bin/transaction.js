@@ -8,13 +8,7 @@ const { whilst, sequence } = asynchronousUtilities;
       
 function transaction(configuration, operations, callback, context) {
   const { Connection } = configuration,
-        completed = false,
-        callbacks = [
-          beginTransactionCallback,
-          executeOperationsCallback,
-          commitTransactionCallback,
-          rollbackTransactionCallback
-        ];
+        completed = false;
 
   Connection.fromConfiguration(configuration, (error, connection) => {
     if (error) {
@@ -33,7 +27,14 @@ function transaction(configuration, operations, callback, context) {
       completed
     });
 
-    sequence(callbacks, () => {
+    operations = [  ///
+      beginTransactionOperation,
+      executeOperationsOperation,
+      commitTransactionOperation,
+      rollbackTransactionOperation
+    ];
+
+    sequence(operations, () => {
       const { completed } = context;
 
       delete context.connection;
@@ -45,12 +46,11 @@ function transaction(configuration, operations, callback, context) {
       callback(completed);
     }, context);
   });
-
 }
 
 module.exports = transaction;
 
-function beginTransactionCallback(next, done, context) {
+function beginTransactionOperation(next, done, context) {
   const { connection } = context,
         log = connection.getLog();
 
@@ -71,7 +71,7 @@ function beginTransactionCallback(next, done, context) {
   });
 }
 
-function commitTransactionCallback(next, done, context) {
+function commitTransactionOperation(next, done, context) {
   const { completed } = context;
 
   if (!completed) {
@@ -100,7 +100,7 @@ function commitTransactionCallback(next, done, context) {
   });
 }
 
-function rollbackTransactionCallback(next, done, context) {
+function rollbackTransactionOperation(next, done, context) {
   const { completed } = context;
 
   if (completed) {
@@ -129,7 +129,7 @@ function rollbackTransactionCallback(next, done, context) {
   });
 }
 
-function executeOperationsCallback(next, done, context) {
+function executeOperationsOperation(next, done, context) {
   whilst(executeOperation, next, context);
 }
 

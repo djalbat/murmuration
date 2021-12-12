@@ -1,7 +1,7 @@
 "use strict";
 
-const initialiseCallback = require("./migrate/callback/initialise"),
-      applyMigrationsCallback = require("./migrate/callback/applyMigrations");
+const initialiseOperation = require("./migrate/operation/initialise"),
+      applyMigrationsOperation = require("./migrate/operation/applyMigrations");
 
 const { asynchronousUtilities } = require("necessary");
 
@@ -9,8 +9,8 @@ const { sequence } = asynchronousUtilities;
 
 function migrate(configuration, migrationsDirectoryPath, callback) {
   const callbacks = [
-          initialiseCallback,
-          applyMigrationsCallback
+          initialiseOperation,
+          applyMigrationsOperation
         ],
         error = false,  ///
         context = {

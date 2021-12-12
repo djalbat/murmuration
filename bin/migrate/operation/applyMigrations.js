@@ -10,7 +10,7 @@ const { insertVersion, selectMaximumVersion } = require("../../table/migration")
 const { first } = arrayUtilities,
       { whilst } = asynchronousUtilities;
 
-function applyMigrationsCallback(next, done, context) {
+function applyMigrationsOperation(next, done, context) {
   const { configuration, migrationsDirectoryPath } = context,
         migrations = Migrations.fromMigrationsDirectoryPath(migrationsDirectoryPath),
         { log } = configuration;
@@ -23,16 +23,16 @@ function applyMigrationsCallback(next, done, context) {
     migrations
   });
 
-  whilst(applyMigrationCallback, () => {
+  whilst(applyMigrationOperation, () => {
     delete context.migrations;
 
     done();
   }, context);
 }
 
-module.exports = applyMigrationsCallback;
+module.exports = applyMigrationsOperation;
   
-function applyMigrationCallback(next, done, context) {
+function applyMigrationOperation(next, done, context) {
   const { configuration } = context,
         { log } = configuration;
 

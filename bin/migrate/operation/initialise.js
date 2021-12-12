@@ -4,7 +4,7 @@ const transaction = require("../../transaction");
 
 const { createTable, insertVersion, showLikeTables } = require("../../table/migration");
 
-function initialiseCallback(next, done, context) {
+function initialiseOperation(next, done, context) {
   const { configuration } = context,
         { log } = configuration;
 
@@ -13,9 +13,9 @@ function initialiseCallback(next, done, context) {
   }
 
   const operations = [
-    checkTablePresent,
-    createMissingTable,
-    insertZeroVersion
+    checkTablePresentOperatino,
+    createMissingTableOperation,
+    insertZeroVersionOperation
   ];
 
   transaction(configuration, operations, (completed) => {
@@ -39,9 +39,9 @@ function initialiseCallback(next, done, context) {
   }, context);
 }
 
-module.exports = initialiseCallback;
+module.exports = initialiseOperation;
 
-function checkTablePresent(connection, abort, proceed, complete, context) {
+function checkTablePresentOperatino(connection, abort, proceed, complete, context) {
   const { configuration } = context,
         { migrationSQLMap } = configuration,
         { showLikeTablesMigrationSQL } = migrationSQLMap,
@@ -65,7 +65,7 @@ function checkTablePresent(connection, abort, proceed, complete, context) {
   });
 }
 
-function createMissingTable(connection, abort, proceed, complete, context) {
+function createMissingTableOperation(connection, abort, proceed, complete, context) {
   const { configuration } = context,
         { migrationSQLMap } = configuration,
         { createTableMigrationSQL } = migrationSQLMap,
@@ -81,7 +81,7 @@ function createMissingTable(connection, abort, proceed, complete, context) {
   });
 }
 
-function insertZeroVersion(connection, abort, proceed, complete, context) {
+function insertZeroVersionOperation(connection, abort, proceed, complete, context) {
   const { configuration } = context,
         { migrationSQLMap } = configuration,
         { insertVersionMigrationSQL } = migrationSQLMap,
