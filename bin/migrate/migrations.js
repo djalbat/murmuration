@@ -50,19 +50,9 @@ class Migrations {
 
 module.exports = Migrations;
 
-function customTextFileNamesFromEEntryNames(entryNames) {
-  const test = /.+CUSTOM\.txt$/.test,
-        customTextFileNames = fileNamesFromEntryNames(entryNames, test);
+function customTextFileNamesFromEEntryNames(entryNames) { return fileNamesFromEntryNames(entryNames, (entryName) => /.+CUSTOM\.txt$/.test(entryName)); }
 
-  return customTextFileNames;
-}
-
-function sqlFileNamesFromEntryNames(entryNames) {
-  const test = /.+\.sql$/.test,
-        sqlFileNames = fileNamesFromEntryNames(entryNames, test);
-
-  return sqlFileNames;
-}
+function sqlFileNamesFromEntryNames(entryNames) { return fileNamesFromEntryNames(entryNames, (entryName) => /.+\.sql$/.test(entryName)); }
 
 function fileNamesFromEntryNames(entryNames, test) {
   const fileNames = entryNames.reduce((fileNames, entryName) => {
