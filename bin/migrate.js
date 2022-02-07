@@ -7,7 +7,13 @@ const { asynchronousUtilities } = require("necessary");
 
 const { sequence } = asynchronousUtilities;
 
-function migrate(configuration, migrationsDirectoryPath, callback) {
+function migrate(configuration, migrationsDirectoryPath, CustomMigrationMap, callback) {
+  if (callback === undefined) {
+    callback = CustomMigrationMap; ///
+
+    CustomMigrationMap = {};
+  }
+
   const callbacks = [
           initialiseOperation,
           applyMigrationsOperation
@@ -16,6 +22,7 @@ function migrate(configuration, migrationsDirectoryPath, callback) {
         context = {
           error,
           configuration,
+          CustomMigrationMap,
           migrationsDirectoryPath
         };
 

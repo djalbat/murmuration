@@ -1,7 +1,7 @@
 {
   "name": "murmuration",
   "author": "James Smith",
-  "version": "1.0.23",
+  "version": "1.0.24",
   "license": "MIT, Anti-996",
   "homepage": "https://github.com/djalbat/murmuration",
   "description": "Database connections, transactions and migrations.",

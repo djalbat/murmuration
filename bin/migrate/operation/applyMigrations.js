@@ -11,8 +11,8 @@ const { first } = arrayUtilities,
       { whilst } = asynchronousUtilities;
 
 function applyMigrationsOperation(next, done, context) {
-  const { configuration, migrationsDirectoryPath } = context,
-        migrations = Migrations.fromMigrationsDirectoryPath(migrationsDirectoryPath),
+  const { configuration, CustomMigrationMap, migrationsDirectoryPath } = context,
+        migrations = Migrations.fromCustomMigrationMapAndMigrationsDirectoryPath(CustomMigrationMap, migrationsDirectoryPath),
         { log } = configuration;
 
   if (log) {
