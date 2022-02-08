@@ -4,8 +4,8 @@ Database connections, transactions and migrations.
 
 There are two specific packages that you should make use of instead this one:
 
-* [murmuration-mariadb](https://github.com/djalbat/murmuration-mariadb)
-* [murmuration-postgresql](https://github.com/djalbat/murmuration-postgresql)
+* [Murmuration-MariaDB](https://github.com/djalbat/murmuration-mariadb)
+* [Murmuration-PostGreSQL](https://github.com/djalbat/murmuration-postgresql)
 
 This readme file largely pertains to both, although there are also specific instructions given in readme file for each.
 
@@ -255,15 +255,15 @@ Migrations must obviously never, ever be changed once they have been committed. 
 
 If used with care, this migration functionality is wholly effective in the aforementioned use case of a single database instance allied with one or possibly many application instances.
 
-## Custom migrations
+### Custom migrations
 
-As well as migrations based on SQL files it is possible to add custom migrations. These are flagged by custom text files that sit next to the SQL files in the same directory. They must have the following format:
+As well as migrations based on SQL files it is possible to add custom migrations. These are identified by custom text files that sit next to the SQL files in the migrations directory. They must have the following format:
 
 ```
 12-CUSTOM.txt
 ```
 
-That is, the file name should start with a contiguous version number followed by a hyphen, just like the normal migration SQL files, but end with `CUSTOM` and have a `.txt` extension. Any other format will be ignored and will also lead to all further migrations being ignored. The contents of these files can be left empty or can contain information pertinent to the custom migration. 
+That is, the file name must start with a contiguous version number followed by a hyphen, but end with `CUSTOM` and have a `.txt` extension. Any other format will be ignored and will also lead to all further migrations being ignored. The contents of these files can be left empty or can contain information pertinent to the custom migration. 
 
 To create a custom migration, extend the CustomMigration class and fill out the `apply()` method as needed. This example requires the CustomMigration class from the Murmuration-PostGreSQL package but the same holds for the Murmuration-MariaDB package:
 
@@ -286,17 +286,17 @@ class IdentifierCustomMigration extends CustomMigration {
 ```
 Note that the `apply()` method takes `connection` and `callback` arguments. The latter must be called with a boolean `error` argument when the migration completes. Also note the format of the static `fromFilePath()` factory method. The file path of the text file is available via a standard `getFilePath()` method, by the way.
 
-Custom migrations must be collected together into a map the keys of which are precisely the file names of the custom text files in the migrations SQL directory. For example:
+Custom migrations must be collected together into a map, the keys of which are precisely the file names of the custom text files in the migrations SQL directory. For example:
 
 ```
 const IdentifierCustomMigration = rquire("./identifierCustomMigration");
 
 const CustomMigrationMap = {
-  "13-Custom.txt" : IdentifierCustomMigration
+  "13-CUSTOM.txt" : IdentifierCustomMigration
 };
 ```
 
-This map is passed as an optional third argument to the `migrate()` function as follows:
+This map should be passed as an optional third argument to the `migrate()` function as follows:
 
 ```
 migrate(configuration, migrationsDirectoryPath, CustomMigrationMap (error) => {
@@ -304,6 +304,8 @@ migrate(configuration, migrationsDirectoryPath, CustomMigrationMap (error) => {
   ...
 });
 ```
+
+It is possible to use the same custom migration class for multiple custom migrations with the contents of the custom text files dictating the behaviours of at each invocation.
 
 ## Contact
 
