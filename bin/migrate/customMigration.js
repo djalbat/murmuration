@@ -1,22 +1,18 @@
 "use strict";
 
-const { arrayUtilities, fileSystemUtilities } = require("necessary");
+const { arrayUtilities } = require("necessary");
 
-const { second } = arrayUtilities,
-      { readFile } = fileSystemUtilities;
+const { second } = arrayUtilities;
 
 class CustomMigration {
   constructor(filePath) {
     this.filePath = filePath;
   }
 
-  getSQL() {
-    const fileContent = readFile(this.filePath),
-          sql = fileContent;  ///
-
-    return sql;
+  getFilePath() {
+    return this.filePath;
   }
-  
+
   getVersion() {
     const matches = this.filePath.match(/(\d+)-.+$/),
           secondMatch = second(matches),

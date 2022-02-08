@@ -255,6 +255,56 @@ Migrations must obviously never, ever be changed once they have been committed. 
 
 If used with care, this migration functionality is wholly effective in the aforementioned use case of a single database instance allied with one or possibly many application instances.
 
+## Custom migrations
+
+As well as migrations based on SQL files it is possible to add custom migrations. These are flagged by custom text files that sit next to the SQL files in the same directory. They must have the following format:
+
+```
+12-CUSTOM.txt
+```
+
+That is, the file name should start with a contiguous version number followed by a hyphen, just like the normal migration SQL files, but end with `CUSTOM` and have a `.txt` extension. Any other format will be ignored and will also lead to all further migrations being ignored. The contents of these files can be left empty or can contain information pertinent to the custom migration. 
+
+To create a custom migration, extend the CustomMigration class and fill out the `apply()` method as needed. This example requires the CustomMigration class from the Murmuration-PostGreSQL package but the same holds for the Murmuration-MariaDB package:
+
+```
+const { CustomMigration } = require("murmuration-postgresql");
+
+class IdentifierCustomMigration extends CustomMigration {
+  apply(connection, callback) {
+    ...
+    
+    callback(error);
+  }
+
+  static fromFilePath(filePath) {
+    const identifierCustomMigration = new IdentifierCustomMigration(filePath);
+
+    return identifierCustomMigration;
+  }
+}
+```
+Note that the `apply()` method takes `connection` and `callback` arguments. The latter must be called with a boolean `error` argument when the migration completes. Also note the format of the static `fromFilePath()` factory method. The file path of the text file is available via a standard `getFilePath()` method, by the way.
+
+Custom migrations must be collected together into a map the keys of which are precisely the file names of the custom text files in the migrations SQL directory. For example:
+
+```
+const IdentifierCustomMigration = rquire("./identifierCustomMigration");
+
+const CustomMigrationMap = {
+  "13-Custom.txt" : IdentifierCustomMigration
+};
+```
+
+This map is passed as an optional third argument to the `migrate()` function as follows:
+
+```
+migrate(configuration, migrationsDirectoryPath, CustomMigrationMap (error) => {
+
+  ...
+});
+```
+
 ## Contact
 
 - james.smith@djalbat.com
