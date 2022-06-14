@@ -2,9 +2,12 @@
 
 const { arrayUtilities } = require("necessary");
 
+const database = require("./database");
+
 const { EMPTY_STRING } = require("./constants");
 
-const { first } = arrayUtilities;
+const { first } = arrayUtilities,
+      { query, execute: command } = database;
 
 class Statement {
   constructor(connection, sql, query, parameters, oneHandler, noneHandler, manyHandler, elseHandler, firstHandler, errorHandler, successHandler) {
@@ -67,6 +70,10 @@ class Statement {
 
   setSQL(sql) {
     this.sql = sql;
+  }
+
+  setQuery(query) {
+    this.query = query;
   }
 
   one(oneHandler) {
@@ -251,6 +258,12 @@ class Statement {
     ];
 
     return clause;
+  }
+
+  execute() {
+    this.query ?
+      query(this.connection, this.sql, ...this.parameters, this.queryHandler) :
+        command(this.connection, this.sql, ...this.parameters, this.commandHandler);
   }
 
   queryHandler = (error, rows) => {
