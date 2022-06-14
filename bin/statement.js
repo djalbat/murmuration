@@ -190,8 +190,8 @@ class Statement {
             const placeholder = this.placeholder();
 
             values = (index === firstIndex) ?
-                      `${column}=${placeholder}` :
-                        ` ${values}, ${column}=${placeholder}`;
+                      `${placeholder}` :
+                        ` ${values}, ${placeholder}`;
 
             return values;
           }, EMPTY_STRING);
