@@ -147,26 +147,22 @@ class Statement {
     return this;
   }
 
-  values(object) {
-    const columns = this.columnsFromObject(object),
-          parameters = Object.values(object),
-          firstIndex = 0,
-          placeholders = columns.reduce((placeholders, column, index) => {
-            const placeholder = this.placeholder();
+  values(objectOrArray, ...parameters) {
+    const objectOrArrayIsArray = Array.isArray(objectOrArray);
 
-            placeholders = (index === firstIndex) ?
-                            `${placeholder}` :
-                              `${placeholders}, ${placeholder}`;
+    if (objectOrArrayIsArray) {
+      const array = objectOrArray,
+          strings = array,  ///
+          columnsAndValues = this.columnsAndValuesFromStringsAndParameters(strings, parameters);
 
-            return placeholders;
-          }, EMPTY_STRING)
+      this.sql = `${this.sql} ${columnsAndValues}`;
+    } else {
+      const object = objectOrArray,  ///
+          values = this.valuesFromObject(object),
+          columns = this.columnsFromObject(object)
 
-    this.sql = `${this.sql} (${columns}) VALUES (${placeholders})`;
-
-    this.parameters = [
-      ...this.parameters,
-      ...parameters
-    ];
+      this.sql = `${this.sql} (${columns}) VALUES (${values})`;
+    }
 
     return this;
   }
@@ -184,6 +180,28 @@ class Statement {
           }, {});
 
     return object;
+  }
+
+  valuesFromObject(object) {
+    const columns = this.columnsFromObject(object),
+          parameters = Object.values(object), ///
+          firstIndex = 0,
+          values = columns.reduce((values, column, index) => {
+            const placeholder = this.placeholder();
+
+            values = (index === firstIndex) ?
+                      `${column}=${placeholder}` :
+                        ` ${values}, ${column}=${placeholder}`;
+
+            return values;
+          }, EMPTY_STRING);
+
+    this.parameters = [
+      ...this.parameters,
+      ...parameters
+    ];
+
+    return values;
   }
 
   clauseFromObject(object) {
@@ -258,6 +276,29 @@ class Statement {
     ];
 
     return clause;
+  }
+
+  columnsAndValuesFromStringsAndParameters(strings, parameters) {
+    const stringsLength = strings.length,
+          lastIndex = stringsLength - 1,
+          columnsAndValues = strings.reduce((columnsAndValues, string, index) => {
+            if (index < lastIndex) {
+              const placeholder = this.placeholder();
+
+              columnsAndValues = `${columnsAndValues}${string}${placeholder}`
+            } else {
+              columnsAndValues = `${columnsAndValues}${string}`;
+            }
+
+            return columnsAndValues;
+          }, EMPTY_STRING);
+
+    this.parameters = [
+      ...this.parameters,
+      ...parameters
+    ];
+
+    return columnsAndValues;
   }
 
   execute() {
