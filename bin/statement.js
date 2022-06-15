@@ -152,14 +152,14 @@ class Statement {
 
     if (objectOrArrayIsArray) {
       const array = objectOrArray,
-          strings = array,  ///
-          columnsAndValues = this.columnsAndValuesFromStringsAndParameters(strings, parameters);
+            strings = array,  ///
+            columnsAndValues = this.columnsAndValuesFromStringsAndParameters(strings, parameters);
 
       this.sql = `${this.sql} ${columnsAndValues}`;
     } else {
       const object = objectOrArray,  ///
-          values = this.valuesFromObject(object),
-          columns = this.columnsFromObject(object)
+            values = this.valuesFromObject(object),
+            columns = this.columnsFromObject(object)
 
       this.sql = `${this.sql} (${columns}) VALUES (${values})`;
     }
