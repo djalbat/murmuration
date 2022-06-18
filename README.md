@@ -147,10 +147,7 @@ Note:
 
 * The `set()` method takes a plain old JavaScript object.
 
-Note that the assumption with passing a plain old JavaScript object in order to generate a `WHERE` clause is that the property values should be equated. Note also that the `abort()` function is provided directly to the `catch()` method.
-
-
-Generally the idea is to be able to generate the most commonly used kinds of statements are deal with the outcomes of their execution with the minimum of fuss. If passing plain old JavaScript objects will not suffice then template literals can be used instead.
+In general, the assumption with passing plain old JavaScript objects is that clauses and so forth can easily be constructed from them. The `set()`, `where()` and `values()` methods can also take appended template literals, however, so that you can define parts of the SQL with more freedom. More detail is given towards the end of the next subsection.
 
 ### Statement class specification
 
@@ -158,18 +155,17 @@ The following specification gives a complete and more detailed list of the metho
 
 * One of the `selectFrom()`, `insertInto()`, `deleteFrom()` or `delete()` methods must be called. Each takes a string for the name of a table or view. 
 
-It is recommended that these methods are not called directly, rather methods that call them indirectly are created on a subclass of the `Statement` class, in order to avoid repetition. This is covered in the later subsection on extending the `Statement` class.
+It is recommended that these methods are not called directly, by the way, rather methods that call them indirectly are created on a subclass of the `Statement` class, in order to avoid repetition. This is covered in the later subsection on extending the `Statement` class.
 
-If the `selectFrom()` method is called, then one of the following of the following methods must be called. Each takes a callback:
-
-* The `none()` method for when no rows are returned.
-* The `one()` method for when exactly one row is returned.
-* The `first()` method for when one or more rows are returned.
-* The `many()` method for when any number of rows are returned, including none.
+* The `success()` method must accompany the `insertInto()`, `deleteFrom()` or `delete()` methods.
+* If the `selectFrom()` method is called, then one of the following of the following methods must be called. Each takes a callback:
+    * The `none()` method for when no rows are returned.
+    * The `one()` method for when exactly one row is returned.
+    * The `first()` method for when one or more rows are returned.
+    * The `many()` method for when any number of rows are returned, including none.
 
 In all but the last case, you must also call the `else()` method with a callback.
 
-* The `success()` method must accompany the `insertInto()`, `deleteFrom()` or `delete()` methods. 
 * The `catch()` method must always be called with a callback for when an exception occurs.
 * Either the `getSQL()` or `execute()` methods must be called, usually the latter.
 
