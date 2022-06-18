@@ -158,18 +158,19 @@ The following specification gives a complete and more detailed list of the metho
 It is recommended that these methods are not called directly, by the way, rather methods that call them indirectly are created on a subclass of the `Statement` class, in order to avoid repetition. This is covered in the later subsection on extending the `Statement` class.
 
 * The `success()` method must accompany the `insertInto()`, `deleteFrom()` or `delete()` methods.
-* If the `selectFrom()` method is called, then one of the following of the following methods must be called. Each takes a callback:
+* If the `selectFrom()` method is called, then one of the following of the following methods must also be called. Each takes a callback. In all but the last case, you must also call the `else()` method with a callback:
     * The `none()` method for when no rows are returned.
     * The `one()` method for when exactly one row is returned.
     * The `first()` method for when one or more rows are returned.
     * The `many()` method for when any number of rows are returned, including none.
 
-In all but the last case, you must also call the `else()` method with a callback.
-
 * The `catch()` method must always be called with a callback for when an exception occurs.
+* The `set()` method must be called along with the `update()` method.
+* The `where()` method can be called with all but the `insertInto()` method.
+* The `values()` method must be called along with the `insertInto()` method.
 * Either the `getSQL()` or `execute()` methods must be called, usually the latter.
 
-If  
+Each of the `set()`, `where()` and `values()` methods can take a plain old JavaScript object or an append template literal. You cannot pass a string as an argument because there is a danger that it might contain an un-escaped value. By forcing you to pass an appended string literal, the method in question is able to pass the array of arguments directly on to the underlying database package thus guaranteeing that the values with be correctly cast and escaped.
 
 ### Getting and releasing connections
 
