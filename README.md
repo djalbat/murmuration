@@ -149,7 +149,7 @@ Note:
 
 In general, the assumption with passing plain old JavaScript objects is that clauses and so forth can easily be constructed from them. The `set()`, `where()` and `values()` methods can also take appended template literals, however, so that you can define parts of the SQL with more freedom. More detail is given towards the end of the next subsection.
 
-### Statement class specification
+### `Statement` class specification
 
 The following specification gives a complete and more detailed list of the methods available.
 
@@ -171,6 +171,65 @@ It is recommended that these methods are not called directly, by the way, rather
 * Either the `getSQL()` or `execute()` methods must be called, usually the latter.
 
 Each of the `set()`, `where()` and `values()` methods can take a plain old JavaScript object or an appended template literal. You cannot pass a string as an argument because there is a danger that it might contain an un-escaped value. By forcing you to pass an appended template literal, the method in question is able to pass the array of arguments it receives directly on to the underlying database package, thereby guaranteeing that they will be correctly cast and escaped.
+
+### Extending the `Statement` class
+
+This is recommended for no other reason that to avoid repetitively passing table or view names to `selectFrom()` methods and the like. A simply exapmle will amply demonstrate:
+
+```
+"use strict";
+
+const { Statement: BaseStatement } = require("./murmuration-...");
+
+const USER_TABLE = "user",
+      RELEASE_TABLE = "release",
+      DISTRIBUTION_TABLE = "attribution",
+      LATEST_RELEASE_VIEW = "latest_release";
+
+class Statement extends BaseStatement {
+  updateUser() { return this.update(USER_TABLE); }
+  updateRelease() { return this.update(RELEASE_TABLE); }
+  updateDistribution() { return this.update(DISTRIBUTION_TABLE); }
+
+  insertIntoUser() { return this.insertInto(USER_TABLE); }
+  insertIntoRelease() { return this.insertInto(RELEASE_TABLE); }
+  insertIntoDistribution() { return this.insertInto(DISTRIBUTION_TABLE); }
+
+  deleteFromUser() { return this.deleteFrom(USER_TABLE); }
+  deleteFromRelease() { return this.deleteFrom(RELEASE_TABLE); }
+  deleteFromDistribution() { return this.deleteFrom(DISTRIBUTION_TABLE); }
+
+  selectFromUser() { return this.selectFrom(USER_TABLE); }
+  selectFromRelease() { return this.selectFrom(RELEASE_TABLE); }
+  selectFromDistribution() { return this.selectFrom(DISTRIBUTION_TABLE); }
+
+  selectFromLatestRelease() { return this.selectFrom(LATEST_RELEASE_VIEW); }
+
+  static fromConnection(connection) { return BaseStatement.fromConnection(Statement, connection); }
+}
+
+module.exports = Statement;
+```
+
+Here the ellipsis in the `require()` statement should be replaced as needed.
+
+Now make use of this subclass in your own `using()` function...
+
+```
+"use strict";
+
+const Statement = require("./statement");
+
+function using(connection) {
+  const statement = Statement.fromConnection(connection);
+
+  return statement;
+}
+
+module.exports = using;
+```
+
+...or require and instantiate it directly. The `using()` function is only for convenience.
 
 ### Getting and releasing connections
 
