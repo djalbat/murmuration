@@ -76,6 +76,10 @@ class Statement {
     this.query = query;
   }
 
+  setParameters(parameters) {
+    this.parameters = parameters;
+  }
+
   one(oneHandler) {
     this.oneHandler = oneHandler;
 
@@ -118,8 +122,21 @@ class Statement {
     return this;
   }
 
-  set(object) {
-    const assignments = this.assignmentsFromObject(object); ///
+  set(objectOrArray, ...parameters) {
+    let assignments;
+
+    const objectOrArrayIsArray = Array.isArray(objectOrArray);
+
+    if (objectOrArrayIsArray) {
+      const array = objectOrArray,  ///
+            strings = array;  ///
+
+      assignments = this.assignmentsFromStringsAndParameters(strings, parameters);
+    } else {
+      const object = objectOrArray;  ///
+
+      assignments = this.assignmentsFromObject(object); ///
+    }
 
     this.sql = ` ${this.sql} SET ${assignments}`;
 
@@ -132,7 +149,7 @@ class Statement {
     const objectOrArrayIsArray = Array.isArray(objectOrArray);
 
     if (objectOrArrayIsArray) {
-      const array = objectOrArray,
+      const array = objectOrArray,  ///
             strings = array;  ///
 
       clause = this.clauseFromStringsAndParameters(strings, parameters);
@@ -150,19 +167,20 @@ class Statement {
   values(objectOrArray, ...parameters) {
     const objectOrArrayIsArray = Array.isArray(objectOrArray);
 
+    let columnsAndValues;
+
     if (objectOrArrayIsArray) {
-      const array = objectOrArray,
-            strings = array,  ///
-            columnsAndValues = this.columnsAndValuesFromStringsAndParameters(strings, parameters);
+      const array = objectOrArray,  ///
+            strings = array;  ///
 
-      this.sql = `${this.sql} ${columnsAndValues}`;
+      columnsAndValues = this.columnsAndValuesFromStringsAndParameters(strings, parameters);
     } else {
-      const object = objectOrArray,  ///
-            values = this.valuesFromObject(object),
-            columns = this.columnsFromObject(object)
+      const object = objectOrArray;  ///
 
-      this.sql = `${this.sql} (${columns}) VALUES (${values})`;
+      columnsAndValues = this.columnsAndValuesFromObject(object);
     }
+
+    this.sql = `${this.sql} ${columnsAndValues}`;
 
     return this;
   }
@@ -182,38 +200,17 @@ class Statement {
     return object;
   }
 
-  valuesFromObject(object) {
-    const columns = this.columnsFromObject(object),
-          parameters = Object.values(object), ///
-          firstIndex = 0,
-          values = columns.reduce((values, column, index) => {
-            const placeholder = this.placeholder();
-
-            values = (index === firstIndex) ?
-                      `${placeholder}` :
-                        ` ${values}, ${placeholder}`;
-
-            return values;
-          }, EMPTY_STRING);
-
-    this.parameters = [
-      ...this.parameters,
-      ...parameters
-    ];
-
-    return values;
-  }
-
   clauseFromObject(object) {
-    const columns = this.columnsFromObject(object),
+    const keys = Object.keys(object),
+          columns = keys.map((key) => this.columnFromKey(key)),
           parameters = Object.values(object), ///
           firstIndex = 0,
           clause = columns.reduce((clause, column, index) => {
             const placeholder = this.placeholder();
 
             clause = (index === firstIndex) ?
-                       `${column}=${placeholder}` :
-                         ` ${clause} AND ${column}=${placeholder}`;
+                `${column}=${placeholder}` :
+                ` ${clause} AND ${column}=${placeholder}`;
 
             return clause;
           }, EMPTY_STRING);
@@ -226,23 +223,17 @@ class Statement {
     return clause;
   }
 
-  columnsFromObject(object) {
-    const keys = Object.keys(object),
-          columns = keys.map((key) => this.columnFromKey(key));
-
-    return columns;
-  }
-
   assignmentsFromObject(object) {
-    const columns = this.columnsFromObject(object),
+    const keys = Object.keys(object),
+          columns = keys.map((key) => this.columnFromKey(key)),
           parameters = Object.values(object), ///
           firstIndex = 0,
           assignments = columns.reduce((assignments, column, index) => {
             const placeholder = this.placeholder();
 
             assignments = (index === firstIndex) ?
-                           `${column}=${placeholder}` :
-                             ` ${assignments}, ${column}=${placeholder}`;
+                `${column}=${placeholder}` :
+                ` ${assignments}, ${column}=${placeholder}`;
 
             return assignments;
           }, EMPTY_STRING);
@@ -253,6 +244,30 @@ class Statement {
     ];
 
     return assignments;
+  }
+
+  columnsAndValuesFromObject(object) {
+    const keys = Object.keys(object),
+          columns = keys.map((key) => this.columnFromKey(key)),
+          parameters = Object.values(object), ///
+          firstIndex = 0,
+          values = columns.reduce((values, column, index) => {
+            const placeholder = this.placeholder();
+
+            values = (index === firstIndex) ?
+                        `${placeholder}` :
+                        ` ${values}, ${placeholder}`;
+
+            return values;
+          }, EMPTY_STRING),
+          columnsAndValues = `(${columns}) VALUES (${values})`;
+
+    this.parameters = [
+      ...this.parameters,
+      ...parameters
+    ];
+
+    return columnsAndValues;
   }
 
   clauseFromStringsAndParameters(strings, parameters) {
@@ -272,10 +287,33 @@ class Statement {
 
     this.parameters = [
       ...this.parameters,
-        ...parameters
+      ...parameters
     ];
 
     return clause;
+  }
+
+  assignmentsFromStringsAndParameters(strings, parameters) {
+    const stringsLength = strings.length,
+          lastIndex = stringsLength - 1,
+          assignments = strings.reduce((assignments, string, index) => {
+            if (index < lastIndex) {
+              const placeholder = this.placeholder();
+
+              assignments = `${assignments}${string}${placeholder}`
+            } else {
+              assignments = `${assignments}${string}`;
+            }
+
+            return assignments;
+          }, EMPTY_STRING);
+
+    this.parameters = [
+      ...this.parameters,
+      ...parameters
+    ];
+
+    return assignments;
   }
 
   columnsAndValuesFromStringsAndParameters(strings, parameters) {

@@ -177,7 +177,7 @@ In all but the last case, you must also call the `else()` method with a callback
 * The `catch()` method must always be called with a callback for when an exception occurs.
 * Either the `getSQL()` or `execute()` methods must be called, usually the latter.
 
-One impor
+If  
 
 ### Getting and releasing connections
 
@@ -217,80 +217,6 @@ If you do not provide a `log` object, all logging is suppressed.
 In the event of an error, if a `log` property has been added to the `configuration` object then the `log.error()` function will be called with a message containing a reasonable stab at the cause of the error. Details can be found in the subsections of the same name in the specific package readme files.
 
 These messages are meant to help with debugging simple mistakes such as providing incorrect configuration. If you do not find them helpful, do not provide a `log` object and be assured that the errors are always returned by way of callback function arguments for you to deal with as you see fit.
-
-### Running queries
-
-Two functions are provided, namely `query()` and `execute()`. The former returns an error and an array of rows returned by the query by way of a callback, the latter only an error by way of a callback. Otherwise their signatures are the same:
-
-```
-const sql = ... ;
-
-query(connection, sql, ...parameters, (error, rows) => {
-
-  ...
-
-});
-
-execute(connection, sql, ...parameters, status, (error) => {
-
-  ...
-
-});
-```
-In both cases, a variable length list of parameters can be passed between the `sql` and `callback` arguments. These replace the placeholders in the SQL you provide. For more information, see the specific packages.
-
-To make use of these functions, it is recommended that you create a file corresponding to each table or view, naming the functions therein to reflect the SQL statements and parameters. The SQL they employ can be read from files, the names of which exactly match the function names. For example:
-
-```
-const SELECT_USERNAME_FILE_NAME = "table/user/selectUsername.sql",
-      SELECT_IDENTIFIER_FILE_NAME = "table/user/selectIdentifier.sql",
-      SELECT_EMAIL_ADDRESS_FILE_NAME = "table/user/selectEmailAddress.sql",
-      UPDATE_NAME_IDENTIFIER_FILE_NAME = "table/user/updateNameIdentifier.sql",
-      ...
-      ;
-
-function selectUsername(connection, username, callback) { ... }
-
-function selectIdentifier(connection, identifier, callback) { ... }
-
-function selectEmailAddress(connection, emailAddress, callback) { ... }
-
-function updateNameIdentifier(connection, name, identifier, callback) { ... }
-
-...
-```
-The body of each of the function should be identical bar the parameters and the use of the `query()` versus the `execute()` function:
-
-```
-function selectEmailAddress(connection, emailAddress, callback) {
-  const filePath = `${SQL_DIRECTORY_PATH}/${SELECT_EMAIL_ADDRESS_FILE_NAME}`,
-        sql = sqlFromFilePath(filePath);
-
-  query(connection, sql, emailAddress, (error, rows) => {
-    if (error) {
-      log.error("selectEmailAddress() failed.");
-    }
-
-    callback(error, rows);
-  });
-}
-
-function updateNameIdentifier(connection, name, identifier, callback) {
-  const filePath = `${SQL_DIRECTORY_PATH}/${UPDATE_NAME_IDENTIFIER_FILE_NAME}`,
-        sql = sqlFromFilePath(filePath);
-
-  execute(connection, sql, name, identifier, (error) => {
-    if (error) {
-      log.error("updateNameIdentifier() failed.");
-    }
-
-    callback(error);
-  });
-}
-```
-Note that the parameters, as well as matching the function names precisely, are passed directly to the `query()` or `execute()` functions. Essentially the only purpose of these functions is to retrieve the SQL, pass it to the requisite murmuration function and log an error if it occurs.
-
-Lastly, it is recommended that you avoid complex queries that span more than one table and always employ views instead. For information on views, see the MariaDB documentation [here](https://mariadb.com/kb/en/views/).
 
 ### Using transactions
 
