@@ -44,28 +44,26 @@ In the first example, a `SELECT` statement is generated that checks an `account`
 ```
 const using = require("../using");
 
-const { unauthorized } = require("../utilities/states");
- 
 function checkAccountOperation(connection, abort, proceed, complete, context) {
-    const { emailAddress, password } = context;
+  const { emailAddress, password } = context;
+  
+  using(connection)
+    .selectFromAccont()
+    .where({ emailAddress, password })
+    .one(({ id }) => {
+      Object.assign(context, {
+        id
+      });
     
-    using(connection)
-      .selectFromAccont()
-      .where({ emailAddress, password })
-      .one(({ id }) => {
-        Object.assign(context, {
-          id
-        });
-        
-        proceed();
-      })
-      .else(() => {
-        unauthorized(context);
-        
-        complete()
-      })
-      .catch(abort)
-      .execute();
+      proceed();
+    })
+    .else(() => {
+      ...
+    
+      complete()
+    })
+    .catch(abort)
+    .execute();
 }
 ```
 
@@ -74,7 +72,6 @@ There are several points worth noting:
 * As already mentioned, ideally statements should be executed within operations. Each operation provides a connection and a context as well as three callbacks.
 * The three callbacks allow the result of the execution to determine whether the application should proceed to the next operation or if the transaction should be aborted or completed.
 * A local `using()` function has been employed rather the the function supplied by the package, because the `Statement` class it utilities has been extended for convenience. More on this later.
-* A `forbidden()` function has been employed to assign the requisite status code to the context. This has nothing to do with Murmuration, it just demonstrates a common use case of an operation that is used in a RESTful endpoint.
 
 The remainder of the points pertain to the statement itself. An exhaustive description of the various methods available is given at the end of this subsection.
 
@@ -86,7 +83,7 @@ The remainder of the points pertain to the statement itself. An exhaustive descr
 
 Note that the assumption with passing a plain old JavaScript object in order to generate a `WHERE` clause is that the property values should be equated. Note also that the `abort()` function is provided directly to the `catch()` method.
 
-In the following example, rows in a table holding temporary reset table are deleted when they expire.
+In the following example, rows in a table holding temporary reset codes are deleted once they expire.
 
 ```
 const using = require("../using");
@@ -94,23 +91,64 @@ const using = require("../using");
 const { unauthorized } = require("../utilities/states");
  
 function deleteExpiredResetCodesOperation(connection, abort, proceed, complete, context) {
-    const { emailAddress, password } = context;
+  const { emailAddress, password } = context;
     
-    using(connection)
-      .deleteFromResetCode()
-      .where`
-      
-        expires < NOW()
-        
-      `
-      .success(proceed)
-      .catch(abort)
-      .execute();
+  using(connection)
+    .deleteFromResetCode()
+    .where`
+    
+      expires < NOW()
+    
+    `
+    .success(proceed)
+    .catch(abort)
+    .execute();
 }
 ```
 
 The following points are worth noting:
 
+* The Where clause takes a template literal.
+* The `success()` method takes a callback that is called should hte execution succeed().
+
+In the following example, a row is inserted into a table for software packages:
+
+```
+const using = require("../using");
+
+function createReleaseOperation(connection, abort, proceed, complete, context) {
+  const { name, entriesBlob, versionNumber } = context;
+
+  using(connection)
+    .insertIntoRelease()
+    .values({ name, entriesBlob, versionNumber })
+    .success(proceed)
+    .catch(abort)
+    .execute();
+}
+```
+
+Note the following:
+
+* The `values()` method takes a plain old JavaScript object with the values to be inserted.
+
+Finally, the following operation updates a user profile:
+
+```
+const using = require("../using");
+
+function editProfileOperation(connection, abort, proceed, complete, context) {
+  const { name, notes, userIdentifier } = context,
+        identifier = userIdentifier;	///
+
+  using(connection)
+    .updateUser()
+    .set({ name, notes })
+    .where({ identifier })
+    .success(proceed)
+    .execute();
+}
+```
 
 ### Getting and releasing connections
 
