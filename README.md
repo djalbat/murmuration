@@ -69,10 +69,8 @@ function checkAccountOperation(connection, abort, proceed, complete, context) {
 
 There are several points worth noting:
 
-* Each operation provides a connection and a context as well as three callbacks.
-* The three callbacks allow the result of the execution to determine whether the application should proceed to the next operation or if the transaction should be aborted or completed.
-* A local `using()` function has been employed rather the the function supplied by the package, because the `Statement` class it utilities has been extended for convenience. More on this later.
-* The `selectFromAccount()` is defined in the application's own `Statement` class, again more on this later.
+* A local `using()` function has been employed rather the function supplied by the package, because the `Statement` class it utilities has been extended for convenience. For example, `selectFromAccount()` is defined in the application's own `Statement` class.
+* Each operation provides a connection and a context as well as three callbacks. These allow the result of the execution to determine whether the application should proceed to the next operation or if the transaction should be aborted or completed.
 * The `where()` method takes a plain old JavaScript object.
 * The `one()` method takes a handler that is called if one row is returned.
 * The `else()` method takes a handler that is called in all other cases.
