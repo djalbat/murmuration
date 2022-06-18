@@ -1,6 +1,6 @@
 # Murmuration
 
-Database connections, transactions and migrations.
+Database statements, transactions and migrations.
 
 There are two specific packages that you should make use of instead this one:
 
