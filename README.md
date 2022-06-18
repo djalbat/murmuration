@@ -39,7 +39,7 @@ Statements are covered first up, but ideally they should be executed in the cont
 
 Statements are generated dynamically with a simple, promise-like syntax. 
 
-In the first example, a row is selected should its email address and password match the given values:
+In the first example a row is selected should its email address and password match the given values:
 
 ```
 const using = require("../using");
@@ -76,9 +76,7 @@ There are several points worth noting:
 * The `else()` method takes a handler that is called in all other cases.
 * The `catch()` method takes a handler that is called should execution fail.
 
-Note that the assumption with passing a plain old JavaScript object in order to generate a `WHERE` clause is that the property values should be equated. Note also that the `abort()` function is provided directly to the `catch()` method.
-
-In the following example, rows in a table holding temporary reset codes are deleted once they expire.
+In the following example rows in a table holding temporary reset codes are deleted once they expire.
 
 ```
 const using = require("../using");
@@ -106,7 +104,7 @@ The following points are worth noting:
 * The `where()` method takes a template literal this time.
 * The `success()` method takes a callback that is called should hte execution succeed.
 
-In the following example, a row is inserted into a table for software packages:
+In this example a row is inserted into a table for software packages:
 
 ```
 const using = require("../using");
@@ -148,6 +146,9 @@ function editProfileOperation(connection, abort, proceed, complete, context) {
 Note:
 
 * The `set()` method takes a plain old JavaScript object.
+
+Note that the assumption with passing a plain old JavaScript object in order to generate a `WHERE` clause is that the property values should be equated. Note also that the `abort()` function is provided directly to the `catch()` method.
+
 
 Generally the idea is to be able to generate the most commonly used kinds of statements are deal with the outcomes of their execution with the minimum of fuss. If passing plain old JavaScript objects will not suffice then template literals can be used instead.
 
