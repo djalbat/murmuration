@@ -79,10 +79,12 @@ There are several points worth noting:
 The remainder of the points pertain to the statement itself. An exhaustive description of the various methods available is given at the end of this subsection.
 
 * The `selectFromAccount()` is defined in the application's own `Statement` class, again more on this later.
-* The `where()` method takes a plain old JavaScript object, the assumption being that the property values should be equated.
+* The `where()` method takes a plain old JavaScript object.
 * The `one()` method takes a handler that is called if one row is returned.
 * The `else()` method takes a handler that is called in all other cases.
-* The `catch()` method takes a handler that is called should execution fail. Note that in this case, the `abort()` is provided directly.
+* The `catch()` method takes a handler that is called should execution fail.
+
+Note that the assumption with passing a plain old JavaScript object in order to generate a `WHERE` clause is that the property values should be equated. Note also that the `abort()` function is provided directly to the `catch()` method.
 
 In the following example, rows in a table holding temporary reset table are deleted when they expire.
 
@@ -107,6 +109,7 @@ function deleteExpiredResetCodesOperation(connection, abort, proceed, complete, 
 }
 ```
 
+The following points are worth noting:
 
 
 ### Getting and releasing connections
