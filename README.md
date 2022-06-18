@@ -170,7 +170,7 @@ It is recommended that these methods are not called directly, by the way, rather
 * The `values()` method must be called along with the `insertInto()` method.
 * Either the `getSQL()` or `execute()` methods must be called, usually the latter.
 
-Each of the `set()`, `where()` and `values()` methods can take a plain old JavaScript object or an append template literal. You cannot pass a string as an argument because there is a danger that it might contain an un-escaped value. By forcing you to pass an appended string literal, the method in question is able to pass the array of arguments directly on to the underlying database package thus guaranteeing that the values with be correctly cast and escaped.
+Each of the `set()`, `where()` and `values()` methods can take a plain old JavaScript object or an appended template literal. You cannot pass a string as an argument because there is a danger that it might contain an un-escaped value. By forcing you to pass an appended template literal, the method in question is able to pass the array of arguments it receives directly on to the underlying database package, thereby guaranteeing that they will be correctly cast and escaped.
 
 ### Getting and releasing connections
 
