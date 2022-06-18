@@ -31,9 +31,9 @@ Remember that it is the aforementioned specific packages that you should install
 
 ## Usage
 
-Functionality across the specific packages is identical, aside from small differences in configuration and error handling, and is therefore covered here.
+Aside from small differences in configuration and error handling the Functionality across the aforementioned specific packages is identical, and is therefore covered here.
 
-Statements are covered first up, but ideally they should be executed in the context of transactions and therefore the remainder of this section cannot be overlooked. In particular, the example statements that follow are written within operations, which are covered in the later subsection on transactions.
+Statements are covered first up, but ideally they should be executed in the context of transactions and therefore the remainder of this section cannot be overlooked. In particular, the example statements that follow are executed within operations, which are covered in the later subsection on transactions.
 
 ### Generating statements
 
@@ -50,14 +50,14 @@ function checkAccountOperation(connection, abort, proceed, complete, context) {
     const { emailAddress, password } = context;
     
     using(connection)
-      .selectFrom("account")
+      .selectFromAccont()
       .where({ emailAddress, password })
-      .one(( { id } ) => {
+      .one(({ id }) => {
         Object.assign(context, {
           id
         });
         
-        procedd();
+        proceed();
       })
       .else(() => {
         unauthorized(context);
@@ -69,6 +69,14 @@ function checkAccountOperation(connection, abort, proceed, complete, context) {
 }
 ```
 
+There are several points worth noting:
+
+* As already mentioned, ideally statements should be executed within operations. Each operation provides a connection and a context as well as three callbacks.
+* The three callbacks allow the result of the execution to determined whether the application should proceed to the next operation or if the transaction should be aborted or completed.
+* A local `using()` function has been employed rather the the function supplied by the package, because the `Statement` class that the function utilities has been extended for convenience. This will be explained in more detail later.
+* A `forbidden()` function has been employed on the understanding that it will assign the requisite status code to the context. This has nothing to do with Murmuration, it just demonstrates a common use case of an operation that is used for a RESTful endpoint.
+
+The remainder of the points pertain to the statement itself. An exhaustive description of the various methods available is given at the end of this subsection.
 
 ### Getting and releasing connections
 
