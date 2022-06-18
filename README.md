@@ -7,13 +7,11 @@ There are two specific packages that you should make use of instead this one:
 * [Murmuration-MariaDB](https://github.com/djalbat/murmuration-mariadb)
 * [Murmuration-PostGreSQL](https://github.com/djalbat/murmuration-postgresql)
 
-This readme file largely pertains to both, although there are also specific instructions given in readme file for each.
+This readme file pertains to both, although there are specific instructions for each of the above in their own readme files.
 
-Murmuration is meant to be used as alternative to a database [ORM](https://en.wikipedia.org/wiki/Object-relational_mapping). Aside from migrations, it is deliberately simple and low level, in the sense that it provides no more than the bare minimum functionality needed to connect to a database and run commands, optionally in the context of transactions.
+Murmuration is meant to be used as alternative to a database [ORM](https://en.wikipedia.org/wiki/Object-relational_mapping). It is deliberately simple and low level. It provides no more than the bare minimum functionality needed to connect to a database and generate statements to be executed in the context of transactions. 
 
-The migration functionality, if used correctly, will guarantee that a Node application's codebase remains in line with the database it relies on, updating the latter each time the former is deployed.
-
-The prescriptions given below are an essential part of the package. They show how to write database utility functions at scale; how to employ them in the context of transactions; and they outline what needs to be done in order to guarantee the success of migrations.
+There is also some adjunct migration functionality, that may or may not suit your use case. If used as prescribed then it will guarantee that a Node application remains in line with its database, as the latter will be migrated if needed each time the former is deployed.
 
 ## Installation
 
@@ -34,6 +32,43 @@ Remember that it is the aforementioned specific packages that you should install
 ## Usage
 
 Functionality across the specific packages is identical, aside from small differences in configuration and error handling, and is therefore covered here.
+
+Statements are covered first up, but ideally they should be executed in the context of transactions and therefore the remainder of this section cannot be overlooked. In particular, the example statements that follow are written within operations, which are covered in the later subsection on transactions.
+
+### Generating statements
+
+Statements are generated dynamically, in a similar vein to an ORM, in this case with a simple, promise-like syntax. 
+
+In the first example, a `SELECT` statement is generated that checks an `account` table and returns an `id` should the email address and password match:
+
+```
+const using = require("../using");
+
+const { unauthorized } = require("../utilities/states");
+ 
+function checkAccountOperation(connection, abort, proceed, complete, context) {
+    const { emailAddress, password } = context;
+    
+    using(connection)
+      .selectFrom("account")
+      .where({ emailAddress, password })
+      .one(( { id } ) => {
+        Object.assign(context, {
+          id
+        });
+        
+        procedd();
+      })
+      .else(() => {
+        unauthorized(context);
+        
+        complete()
+      })
+      .catch(abort)
+      .execute();
+}
+```
+
 
 ### Getting and releasing connections
 
