@@ -149,7 +149,7 @@ Note:
 
 In general, the assumption with passing plain old JavaScript objects is that clauses and so forth can easily be constructed from them. The `set()`, `where()` and `values()` methods can also take appended template literals, however, so that you can define parts of the SQL with more freedom. More detail is given towards the end of the next subsection.
 
-### `Statement` class specification
+### Statement class specification
 
 The following specification gives a complete and more detailed list of the methods available.
 
@@ -172,9 +172,9 @@ It is recommended that these methods are not called directly, by the way, rather
 
 Each of the `set()`, `where()` and `values()` methods can take a plain old JavaScript object or an appended template literal. You cannot pass a string as an argument because there is a danger that it might contain an un-escaped value. By forcing you to pass an appended template literal, the method in question is able to pass the array of arguments it receives directly on to the underlying database package, thereby guaranteeing that they will be correctly cast and escaped.
 
-### Extending the `Statement` class
+### Extending the Statement class
 
-This is recommended for no other reason that to avoid repetitively passing table or view names to `selectFrom()` methods and the like. A simply exapmle will amply demonstrate:
+This is recommended for no other reason than to avoid repetitively passing table or view names to `selectFrom()` methods and the like. A simple exapmle will amply demonstrate:
 
 ```
 "use strict";
@@ -229,7 +229,7 @@ function using(connection) {
 module.exports = using;
 ```
 
-...or require and instantiate it directly. The `using()` function is only for convenience.
+...or require and instantiate it directly. The `using()` function is purely for convenience.
 
 ### Getting and releasing connections
 
@@ -274,15 +274,14 @@ These messages are meant to help with debugging simple mistakes such as providin
 
 Ideally, all database operations should be run in the context of transactions. There is a single `transaction()` function that allows you to do this. It takes `configuration`, `operations`, `callback` and `context` arguments. The callback provided will have a `completed` argument while the context is mandatory and must be a plain old JavaScript object. The `transaction()` function makes use of the `context` object itself, in fact, with the object's `connection`, `operations` and `completed` properties being reserved.
 
-In the example below, four operations has been provided and the context has properties that they will make use of:
+In the example below, three operations has been provided and the context has properties that they will make use of:
 
 ```
 const configuration = ... ,
       operations = [
-        checkUsernameAvailable,
-        checkEmailAddressAvailable,
-        addEmailAddressUsernamePasswordAndStatus,
-        retrieveUserIdentifier,
+        checkUsernameOperation,
+        checkEmailAddressOperation,
+        addEmailOperation
       ],
       context = {
         emailAddress,
@@ -296,40 +295,16 @@ transaction(configuration, operations, (completed) => {
 
 }, context);
 ```
-The signature of the operations must be identical to the following example:
 
-```
-function checkUsernameAvailable(connection, abort, proceed, complete, context) {
-  const { username } = context;
+The signatures of the operations are given in the usage section. The bodies of the operations are immaterial, again see the usage section for idees. What follows are general prescriptions for how to make use of transactions. 
 
-  selectUsername(connection, username, (error, rows) => {
-    if (error) {
-      abort();
-
-      return;
-    }
-
-    const rowsLength = rows.length;
-
-    (rowsLength === 0) ?
-      proceed() :
-        complete();
-  });
-}
-```
-Note the provision of the `abort()`, `proceed()` and `complete()` callbacks, each of which is utilised. Their utility should be self evident. One important point to note is that there is an explicit `return` statement after the call to the `abort()` callback. It is easy to forget that invoking a callback does not prevent execution continuing in the current context.
-
-It is entirely possible to conflate the first three of these operations into a single SQL statement and then to combine that with the last SQL statement that recovers an auto-incremented identifier. Both of these statements can then be placed in a single SQL file and run with a call to the `query()` function. There is nothing to be gained from such a approach, however, and there are good reasons not to take it:
-
-* You can try to insert values into a table and test whether they are unique by whether or not the insert fails. However, the database will throw an error that is indistinguishable from errors that occur because of, say, syntax errors in the SQL. It could be considered bad practice to knowingly run a query that may result in an error and use the presence of such as an indication of whether or not an otherwise correct query has been successful.
+* You can try to insert values into a table and test whether they are unique by whether or not the insert fails. However, the database will throw an error that is indistinguishable from errors that occur because of, say, syntax errors in the SQL. It could be argued that it is bad practice to knowingly run a query that may result in an error and use the presence of such as an indication of whether or not an otherwise correct query has been successful.
 
 * Often conflating operations means that application logic that is far more suited to, in this case, JavaScript must be added to the SQL itself. Or worse, the application logic is simply assumed to be implicit in the SQL. It is far better to implement this kind of logic explicitly in JavaScript than complicate SQL statements with it.
 
 * As well as conditional branching, for example, often functionality needs to be implemented in the context of a transaction that cannot simply be added to an SQL statement. Unzipping a stored binary, for example, or checking some program variable dependent upon a prior query. Furthermore, a shared context means that even though several parts of the application logic might be related, they can still effectively communication with one another of the course of the transaction.
 
 The example above demonstrates the crux of the approach taken here, therefore. The application logic is to be found in easily readable, atomic form within the body of each operation. On the other hand the SQL statements are considered to be dumb in the sense that they do nothing but slavishly place or retrieve information into or from the database.
-
-This approach leads to less SQL and more JavaScript, however, as already mentioned but well worth repeating, that JavaScript is easily readable and atomic. The downside is a small amount of boilerplate JavaScript wrapping each operation, but this is a small price to pay.
 
 ### Making use of migrations
 
