@@ -37,9 +37,9 @@ Statements are covered first up, but ideally they should be executed in the cont
 
 ### Generating statements
 
-Statements are generated dynamically, in a similar vein to an ORM, in this case with a simple, promise-like syntax. 
+Statements are generated dynamically with a simple, promise-like syntax. 
 
-In the first example, a `SELECT` statement is generated that checks an `account` table and returns an `id` should the email address and password match:
+In the first example, a row is selected should its email address and password match the given values:
 
 ```
 const using = require("../using");
@@ -69,12 +69,9 @@ function checkAccountOperation(connection, abort, proceed, complete, context) {
 
 There are several points worth noting:
 
-* As already mentioned, ideally statements should be executed within operations. Each operation provides a connection and a context as well as three callbacks.
+* Each operation provides a connection and a context as well as three callbacks.
 * The three callbacks allow the result of the execution to determine whether the application should proceed to the next operation or if the transaction should be aborted or completed.
 * A local `using()` function has been employed rather the the function supplied by the package, because the `Statement` class it utilities has been extended for convenience. More on this later.
-
-The remainder of the points pertain to the statement itself. An exhaustive description of the various methods available is given at the end of this subsection.
-
 * The `selectFromAccount()` is defined in the application's own `Statement` class, again more on this later.
 * The `where()` method takes a plain old JavaScript object.
 * The `one()` method takes a handler that is called if one row is returned.
