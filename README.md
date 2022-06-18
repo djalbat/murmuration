@@ -72,11 +72,42 @@ function checkAccountOperation(connection, abort, proceed, complete, context) {
 There are several points worth noting:
 
 * As already mentioned, ideally statements should be executed within operations. Each operation provides a connection and a context as well as three callbacks.
-* The three callbacks allow the result of the execution to determined whether the application should proceed to the next operation or if the transaction should be aborted or completed.
-* A local `using()` function has been employed rather the the function supplied by the package, because the `Statement` class that the function utilities has been extended for convenience. This will be explained in more detail later.
-* A `forbidden()` function has been employed on the understanding that it will assign the requisite status code to the context. This has nothing to do with Murmuration, it just demonstrates a common use case of an operation that is used for a RESTful endpoint.
+* The three callbacks allow the result of the execution to determine whether the application should proceed to the next operation or if the transaction should be aborted or completed.
+* A local `using()` function has been employed rather the the function supplied by the package, because the `Statement` class it utilities has been extended for convenience. More on this later.
+* A `forbidden()` function has been employed to assign the requisite status code to the context. This has nothing to do with Murmuration, it just demonstrates a common use case of an operation that is used in a RESTful endpoint.
 
 The remainder of the points pertain to the statement itself. An exhaustive description of the various methods available is given at the end of this subsection.
+
+* The `selectFromAccount()` is defined in the application's own `Statement` class, again more on this later.
+* The `where()` method takes a plain old JavaScript object, the assumption being that the property values should be equated.
+* The `one()` method takes a handler that is called if one row is returned.
+* The `else()` method takes a handler that is called in all other cases.
+* The `catch()` method takes a handler that is called should execution fail. Note that in this case, the `abort()` is provided directly.
+
+In the following example, rows in a table holding temporary reset table are deleted when they expire.
+
+```
+const using = require("../using");
+
+const { unauthorized } = require("../utilities/states");
+ 
+function deleteExpiredResetCodesOperation(connection, abort, proceed, complete, context) {
+    const { emailAddress, password } = context;
+    
+    using(connection)
+      .deleteFromResetCode()
+      .where`
+      
+        expires < NOW()
+        
+      `
+      .success(proceed)
+      .catch(abort)
+      .execute();
+}
+```
+
+
 
 ### Getting and releasing connections
 
@@ -256,7 +287,7 @@ This approach leads to less SQL and more JavaScript, however, as already mention
 
 The migration functionality will definitely not suit every use case, however it can provide surety for small applications running on multiple Node instances connecting to a single MariaDB instance. It is essential that the prescriptions below are followed pretty much to the letter. Failing to do so will doubtless result in failure.
 
-The `migrate()` function takes the usual `configuration` argument followed by `migrationsDirectoryPath` argument and a `callback` argument.  The callback is invoked with the usual `error` argument, which is truthy if the migrations have succeeded and falsey otherwise.
+The `migrate()` function takes the usual `configuration` argument followed by `migrationsDirectoryPath` argument and a `callback` argument.  The callback is called with the usual `error` argument, which is truthy if the migrations have succeeded and falsey otherwise.
 
 ```
 const configuration = ... ,
