@@ -108,7 +108,7 @@ function deleteExpiredResetCodesOperation(connection, abort, proceed, complete, 
 
 The following points are worth noting:
 
-* The Where clause takes a template literal.
+* The `where()` method takes a template literal this time.
 * The `success()` method takes a callback that is called should hte execution succeed().
 
 In the following example, a row is inserted into a table for software packages:
@@ -149,6 +149,27 @@ function editProfileOperation(connection, abort, proceed, complete, context) {
     .execute();
 }
 ```
+
+Note:
+
+* The `set()` method takes a plain old JavaScript object.
+
+### Statement class specification
+
+The following specification gives a complete and more detailed list of the methods available.
+
+* One of the `selectFrom()`, `insertInto()`, `deleteFrom()` or `delete()` methods must be called. Each takes a string for the name of a table or view. It is recommended that these methods are not called directly, rather methods are created on a subclass of the `Statement` class to avoid repetition. This is covered in the later subsection on extending the `Statement` class.
+
+If the `selectFrom()` method is called, then one of the following of the following methods must be called. Each takes a callback:
+
+  * The `none()` method for when no rows are returned.
+  * The `one()` method for when exactly one row is returned.
+  * The `first()` method for when one or more rows are returned.
+  * The `many()` method for when any number of rows are returned, including none.
+
+In all but the last case, you must also call the `else()` method with a callback.
+
+* If the `insertInto()`, `deleteFrom()` or `delete()` methods are called then the `success()` method must be called. 
 
 ### Getting and releasing connections
 
