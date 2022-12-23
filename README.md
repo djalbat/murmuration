@@ -31,8 +31,6 @@ Remember that it is the aforementioned specific packages that you should install
 
 ## Usage
 
-Functionality across the aforementioned specific packages is identical, aside from small differences in configuration and error handling, and is therefore covered here.
-
 Statements are covered first up, but ideally they should be executed in the context of transactions and therefore the remainder of this section cannot be overlooked. In particular, the example statements that follow are executed inside operations, which are covered in the later subsection. If you do not want to use operations then you can in fact easily wrap statements in promises, again see the relevant subsection below.
 
 ### Generating statements
