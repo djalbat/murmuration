@@ -178,17 +178,74 @@ transaction(configuration, operations, (completed) => {
 }, context);
 ```
 
-The signatures of the operations have already been demonstrated in the examples above. In fact the bodies of the operations are immaterial, they do not have to execute statements and can contain any application logic. However, if you do want to execute statement inside and operation then again see the examples for guidance on how to integration the statement methods with the operation callbacks. 
+The signatures of the operations have already been demonstrated in the examples above. In fact the bodies of the operations are immaterial, they do not have to execute statements and can contain any application logic. However, if you do want to execute statement inside an operation then again see the examples for guidance on how to integration the statement methods with the operation callbacks. 
 
-What follows are general prescriptions for how to make use of transactions.
+What follows are general prescriptions for how to make use of transactions. They are meant to persuade that the small amount of boilerplate necessary to execute any statement inside a transaction is always worth the effort.
 
-* You can try to insert values into a table and test whether they are unique by whether or not the insert fails. However, the database will throw an error that is indistinguishable from errors that occur because of, say, syntax errors in the SQL. It could be argued that it is bad practice to knowingly run a query that may result in an error and use the presence of such as an indication of whether or not an otherwise correct query has been successful.
+* You can try to insert values into a table and test whether they are unique by whether or not the insert fails. However, the database will throw an error that is indistinguishable from errors that occur because of, say, syntax errors in the SQL. It could be argued that it is bad practice to knowingly run a query that may result in an error and use the presence of such as an indication of whether or not an otherwise correct query has been successful. Therefore a better approach is to precede the insert with a select statement and execute both in the context of a transaction. 
 
-* Often conflating operations means that application logic that is far more suited to, in this case, JavaScript must be added to the SQL itself. Or worse, the application logic is simply assumed to be implicit in the SQL. It is far better to implement this kind of logic explicitly in JavaScript than complicate SQL statements with it.
+* Often conflating operations means that application logic that is far more suited to, in this case, JavaScript must be added to the SQL itself. Or worse, the application logic is simply assumed to be implicit in the SQL. It is far better to implement this kind of logic explicitly in JavaScript than complicate SQL statements with it. In short, executing multiple SQL statements threaded together with SQL variables and the like is always best avoided.
 
 * As well as conditional branching, for example, often functionality needs to be implemented in the context of a transaction that cannot simply be added to an SQL statement. Unzipping a stored binary, for example, or checking some program variable dependent upon a prior query. Furthermore, a shared context means that even though several parts of the application logic might be related, they can still effectively communication with one another of the course of the transaction.
 
 The example above demonstrates the crux of the approach taken here, therefore. The application logic is to be found in easily readable, atomic form within the body of each operation. On the other hand the SQL statements are considered to be dumb in the sense that they do nothing but slavishly place or retrieve information into or from the database.
+
+### Supporting promises and the `async`/`await` syntax
+
+Murmuration's promise-like syntax for generating and executing statements is easily and elegantly adaptable to promises. Consider the following asynchronous function to return a user from a database:
+
+```
+async function getUser(connection, identifier) {
+  return new Promise((resolve, reject) => {
+    using(connection)
+      .selectFromUsers()
+      .where({ identifier })
+      .else(() => {
+        const user = null;
+
+        resolve(user);
+      })
+      .one(({ jsonString }) => {
+        const user = User.fromJSONString(jsonString);
+
+        resolve(user);
+      })
+      .catch(reject)
+      .execute();
+  });
+}
+```
+
+Now, rather then the `one)`, `else()` and `catch()` methods calling the callbacks pass via an enclsoing operation, they call the `resolve` and `reject` callbacks of the promise. This means that this function can be utilised as follows:
+
+```
+try {
+  const user = await getUser(connection, identifier); ;
+  
+  /// Make use of the user 
+} catch (error) {
+  /// Handle any error
+}
+```
+
+Note that both the `one()` and `else()` methods call the `resolve` callback whereas the `catch()` method calls the `reject` callback, essentially passing the `error` argument on to body of the outermost `catch` block.
+
+The following example is even more succinct:
+
+```
+async function destroyUser(connection, identifier) {
+  return new Promise((resolve, reject) => {
+    using(connection)
+      .deleteFromUsers()
+      .where({ identifier })
+      .success(resolve)
+      .catch(reject)
+      .execute();
+  });
+}
+```
+
+If you want to interrupt the program flow for debugging purposes then replace the direct references to the `resolve` and `reject` callbacks with arrow functions that call them as in the `one()` and `else()` methods in the first example.
 
 ### Statement class specification
 
