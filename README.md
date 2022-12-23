@@ -216,7 +216,7 @@ async function getUser(connection, identifier) {
 }
 ```
 
-Now, rather then the `one)`, `else()` and `catch()` methods calling the callbacks pass via an enclsoing operation, they call the `resolve` and `reject` callbacks of the promise. This means that this function can be utilised as follows:
+Now, rather then the `one()`, `else()` and `catch()` methods calling the callbacks passed by way of an enclosing operation, they call the `resolve` and `reject` callbacks of the promise. The function can be thus be utilised as follows:
 
 ```
 try {
@@ -245,7 +245,11 @@ async function destroyUser(connection, identifier) {
 }
 ```
 
-If you want to interrupt the program flow for debugging purposes then replace the direct references to the `resolve` and `reject` callbacks with arrow functions that call them as in the `one()` and `else()` methods in the first example.
+If you want to interrupt the program flow for debugging purposes then replace the direct references to the `resolve` and `reject` callbacks with arrow functions that call them, as in the `one()` and `else()` methods in the first example.
+
+Of course both of these functions can be utilised using promises directly, that is calling the `then()` and `catch()` methods of the returned promises directly.
+
+Finally, note that it is easy to encapsulate the instantiation of promises into a function called `promisify()` or such like, but nothing is provided by this package.  
 
 ### Statement class specification
 
@@ -280,28 +284,20 @@ This is recommended for no other reason than to avoid repetitively passing table
 const { Statement: BaseStatement } = require("./murmuration-...");
 
 const USER_TABLE = "user",
-      RELEASE_TABLE = "release",
-      DISTRIBUTION_TABLE = "attribution",
-      LATEST_RELEASE_VIEW = "latest_release";
+      RELEASE_TABLE = "release";
 
 class Statement extends BaseStatement {
   updateUser() { return this.update(USER_TABLE); }
   updateRelease() { return this.update(RELEASE_TABLE); }
-  updateDistribution() { return this.update(DISTRIBUTION_TABLE); }
 
   insertIntoUser() { return this.insertInto(USER_TABLE); }
   insertIntoRelease() { return this.insertInto(RELEASE_TABLE); }
-  insertIntoDistribution() { return this.insertInto(DISTRIBUTION_TABLE); }
 
   deleteFromUser() { return this.deleteFrom(USER_TABLE); }
   deleteFromRelease() { return this.deleteFrom(RELEASE_TABLE); }
-  deleteFromDistribution() { return this.deleteFrom(DISTRIBUTION_TABLE); }
 
   selectFromUser() { return this.selectFrom(USER_TABLE); }
   selectFromRelease() { return this.selectFrom(RELEASE_TABLE); }
-  selectFromDistribution() { return this.selectFrom(DISTRIBUTION_TABLE); }
-
-  selectFromLatestRelease() { return this.selectFrom(LATEST_RELEASE_VIEW); }
 
   static fromConnection(connection) { return BaseStatement.fromConnection(Statement, connection); }
 }
@@ -368,9 +364,9 @@ In the event of an error, if a `log` property has been added to the `configurati
 
 These messages are meant to help with debugging simple mistakes such as providing incorrect configuration. If you do not find them helpful, do not provide a `log` object and be assured that the errors are always returned by way of callback function arguments for you to deal with as you see fit.
 
-### Making use of migrations
+## Migrations
 
-The migration functionality will definitely not suit every use case, however it can provide surety for small applications running on multiple Node instances connecting to a single MariaDB instance. It is essential that the prescriptions below are followed pretty much to the letter. Failing to do so will doubtless result in failure.
+The migration functionality will definitely not suit every use case, however it can provide surety for small applications running on multiple Node instances connecting to a single database instance. It is essential that the prescriptions below are followed pretty much to the letter. Failing to do so will doubtless result in failure.
 
 The `migrate()` function takes the usual `configuration` argument followed by `migrationsDirectoryPath` argument and a `callback` argument.  The callback is called with the usual `error` argument, which is truthy if the migrations have succeeded and falsey otherwise.
 
