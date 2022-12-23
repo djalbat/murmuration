@@ -11,7 +11,7 @@ This readme file pertains to both, although there are specific instructions for 
 
 Murmuration can be used as alternative to a database [ORM](https://en.wikipedia.org/wiki/Object-relational_mapping). It is deliberately simple and low level in the sense that it provides no more than the bare minimum functionality needed to connect to a database and generate statements to be executed ideally in the context of transactions. 
 
-There is also some adjunct migration functionality that may or may not suit your use case. If used as prescribed then it guarantees that an application remains in line with its database, as the latter will be migrated if needed each time the former is deployed.
+There is also some adjunct migration functionality that may or may not suit your use case. If used as prescribed then it guarantees that an application remains in line with its database, as the latter can be migrated if needed each time the former is deployed.
 
 ## Installation
 
@@ -31,16 +31,16 @@ Remember that it is the aforementioned specific packages that you should install
 
 ## Usage
 
-Statements are covered first up, but ideally they should be executed in the context of transactions and therefore the remainder of this section cannot be overlooked. In particular, the example statements that follow are executed inside operations, which are covered in the later subsection. If you do not want to use operations then you can in fact easily wrap statements in promises, again see the relevant subsection below.
+Statements are covered first up, but ideally they should be executed in the context of transactions and therefore the remainder of this section cannot be overlooked. In particular, the example statements that follow are executed inside operations, which are themselves covered in the later subsection. If you do not want to use operations then you can in fact easily wrap statements in promises, again see the relevant subsection later on.
 
 ### Generating statements
 
-Statements are generated dynamically with a simple, promise-like syntax. Again it is worth noting that statements are executed inside operations, which themselves rely on transactions, both of which are covered later on.
+Statements are generated dynamically with a simple, promise-like syntax. Again it is worth noting that they can be executed inside either operations or promises. In the examples below operations are used. Wrapping statement in promises is covered later on.
 
-Note that the following points apply to all of the examples given next:
+Note that the following points apply to all of the examples:
 
 * A local `using()` function has been employed rather the function supplied by the package, because the `Statement` class it utilities has been extended. See the relevant subsection below for more details.
-* Each operation provides a connection and a context as well as the `abort`, `proceed` and `compoete` callbacks. These allow the result of the execution to determine whether the application should abort, proceed to the next operation or complete, respectively. Again see the relevant section below.
+* Each operation provides a connection and a context as well as the `abort`, `proceed` and `compoete` callbacks. These allow the result of the statement's execution to determine whether the application should abort, proceed to the next operation or complete, respectively. Again see the relevant section on operations later on.
 
 In the first example a row is selected should its email address and password match the given values:
 
