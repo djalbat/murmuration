@@ -77,7 +77,7 @@ There are several points worth noting:
 * The `else()` method takes a handler that is called in all other cases.
 * The `catch()` method takes a handler that is called should execution fail.
 
-In the following example rows in a table holding temporary reset codes are deleted once they expire.
+In the following example rows in a table holding temporary reset codes are deleted once they expire:
 
 ```
 const using = require("../using");
@@ -102,7 +102,7 @@ function deleteExpiredResetCodesOperation(connection, abort, proceed, complete, 
 
 The following points are worth noting:
 
-* The `where()` method takes a template literal this time.
+* The `where()` method takes a template literal this time, see below for further details.
 * The `success()` method takes a callback that is called should hte execution succeed.
 
 In this example a row is inserted into a table for software packages:
@@ -149,6 +149,44 @@ Note:
 * The `set()` method takes a plain old JavaScript object.
 
 In general, the assumption with passing plain old JavaScript objects is that clauses and so forth can easily be constructed from them. The `set()`, `where()` and `values()` methods can also take appended template literals, however, so that you can define parts of the SQL with more freedom. More detail is given towards the end of the next subsection.
+
+All of the methods that can be called against the instances of statements returned from the `using()` function are described in the statement specification subsection further below. 
+
+### Using operations
+
+Ideally, all database operations should be run in the context of transactions. There is a single `transaction()` function that allows you to do this. It takes `configuration`, `operations`, `callback` and `context` arguments. The callback provided will have a `completed` argument while the context is mandatory and must be a plain old JavaScript object. The `transaction()` function makes use of the `context` object itself, in fact, with the object's `connection`, `operations` and `completed` properties being reserved.
+
+In the example below, three operations has been provided and the context has properties that they will make use of:
+
+```
+const configuration = ... ,
+      operations = [
+        checkUsernameOperation,
+        checkEmailAddressOperation,
+        addEmailOperation
+      ],
+      context = {
+        emailAddress,
+        username,
+        password
+      };
+
+transaction(configuration, operations, (completed) => {
+
+  ..
+
+}, context);
+```
+
+The signatures of the operations are given in the usage section. The bodies of the operations are immaterial, again see the usage section for idees. What follows are general prescriptions for how to make use of transactions.
+
+* You can try to insert values into a table and test whether they are unique by whether or not the insert fails. However, the database will throw an error that is indistinguishable from errors that occur because of, say, syntax errors in the SQL. It could be argued that it is bad practice to knowingly run a query that may result in an error and use the presence of such as an indication of whether or not an otherwise correct query has been successful.
+
+* Often conflating operations means that application logic that is far more suited to, in this case, JavaScript must be added to the SQL itself. Or worse, the application logic is simply assumed to be implicit in the SQL. It is far better to implement this kind of logic explicitly in JavaScript than complicate SQL statements with it.
+
+* As well as conditional branching, for example, often functionality needs to be implemented in the context of a transaction that cannot simply be added to an SQL statement. Unzipping a stored binary, for example, or checking some program variable dependent upon a prior query. Furthermore, a shared context means that even though several parts of the application logic might be related, they can still effectively communication with one another of the course of the transaction.
+
+The example above demonstrates the crux of the approach taken here, therefore. The application logic is to be found in easily readable, atomic form within the body of each operation. On the other hand the SQL statements are considered to be dumb in the sense that they do nothing but slavishly place or retrieve information into or from the database.
 
 ### Statement class specification
 
@@ -270,42 +308,6 @@ If you do not provide a `log` object, all logging is suppressed.
 In the event of an error, if a `log` property has been added to the `configuration` object then the `log.error()` function will be called with a message containing a reasonable stab at the cause of the error. Details can be found in the subsections of the same name in the specific package readme files.
 
 These messages are meant to help with debugging simple mistakes such as providing incorrect configuration. If you do not find them helpful, do not provide a `log` object and be assured that the errors are always returned by way of callback function arguments for you to deal with as you see fit.
-
-### Using transactions
-
-Ideally, all database operations should be run in the context of transactions. There is a single `transaction()` function that allows you to do this. It takes `configuration`, `operations`, `callback` and `context` arguments. The callback provided will have a `completed` argument while the context is mandatory and must be a plain old JavaScript object. The `transaction()` function makes use of the `context` object itself, in fact, with the object's `connection`, `operations` and `completed` properties being reserved.
-
-In the example below, three operations has been provided and the context has properties that they will make use of:
-
-```
-const configuration = ... ,
-      operations = [
-        checkUsernameOperation,
-        checkEmailAddressOperation,
-        addEmailOperation
-      ],
-      context = {
-        emailAddress,
-        username,
-        password
-      };
-
-transaction(configuration, operations, (completed) => {
-
-  ..
-
-}, context);
-```
-
-The signatures of the operations are given in the usage section. The bodies of the operations are immaterial, again see the usage section for idees. What follows are general prescriptions for how to make use of transactions. 
-
-* You can try to insert values into a table and test whether they are unique by whether or not the insert fails. However, the database will throw an error that is indistinguishable from errors that occur because of, say, syntax errors in the SQL. It could be argued that it is bad practice to knowingly run a query that may result in an error and use the presence of such as an indication of whether or not an otherwise correct query has been successful.
-
-* Often conflating operations means that application logic that is far more suited to, in this case, JavaScript must be added to the SQL itself. Or worse, the application logic is simply assumed to be implicit in the SQL. It is far better to implement this kind of logic explicitly in JavaScript than complicate SQL statements with it.
-
-* As well as conditional branching, for example, often functionality needs to be implemented in the context of a transaction that cannot simply be added to an SQL statement. Unzipping a stored binary, for example, or checking some program variable dependent upon a prior query. Furthermore, a shared context means that even though several parts of the application logic might be related, they can still effectively communication with one another of the course of the transaction.
-
-The example above demonstrates the crux of the approach taken here, therefore. The application logic is to be found in easily readable, atomic form within the body of each operation. On the other hand the SQL statements are considered to be dumb in the sense that they do nothing but slavishly place or retrieve information into or from the database.
 
 ### Making use of migrations
 
