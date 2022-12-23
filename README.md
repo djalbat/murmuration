@@ -33,7 +33,7 @@ Remember that it is the aforementioned specific packages that you should install
 
 Aside from small differences in configuration and error handling the Functionality across the aforementioned specific packages is identical, and is therefore covered here.
 
-Statements are covered first up, but ideally they should be executed in the context of transactions and therefore the remainder of this section cannot be overlooked. In particular, the example statements that follow are executed within operations, which are covered in the later subsection on transactions.
+Statements are covered first up, but ideally they should be executed in the context of transactions and therefore the remainder of this section cannot be overlooked. In particular, the example statements that follow are executed inside operations, which are covered in the later subsection on transactions. If you do not want to use Murmuration's operations then you can in fact easily wrap statements in promises, see the relevant subsection below.
 
 ### Generating statements
 
@@ -69,8 +69,8 @@ function checkAccountOperation(connection, abort, proceed, complete, context) {
 
 There are several points worth noting:
 
-* A local `using()` function has been employed rather the function supplied by the package, because the `Statement` class it utilities has been extended for convenience. For example, `selectFromAccount()` is defined in the application's own `Statement` class.
-* Each operation provides a connection and a context as well as three callbacks. These allow the result of the execution to determine whether the application should proceed to the next operation or if the transaction should be aborted or completed.
+* A local `using()` function has been employed rather the function supplied by the package, because the `Statement` class it utilities has been extended. See the relevant subsection below for more details.
+* Each operation provides a connection and a context as well as the `abort`, `proceed` and `compoete` callbacks. These allow the result of the execution to determine whether the application should abort, proceed to the next operation or complete, respectively.
 * The `where()` method takes a plain old JavaScript object.
 * The `one()` method takes a handler that is called if one row is returned.
 * The `else()` method takes a handler that is called in all other cases.
