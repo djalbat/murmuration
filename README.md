@@ -154,9 +154,9 @@ All of the methods that can be called against the instances of statements return
 
 ### Using operations
 
-Ideally, all database operations should be run in the context of transactions. There is a single `transaction()` function that allows you to do this. It takes `configuration`, `operations`, `callback` and `context` arguments. The callback provided will have a `completed` argument while the context is mandatory and must be a plain old JavaScript object. The `transaction()` function makes use of the `context` object itself, in fact, with the object's `connection`, `operations` and `completed` properties being reserved.
+Ideally, all statements should be executed in the context of a transaction. Murmuration provides a single `transaction()` function that allows you to do this. It takes `configuration`, `operations`, `callback` and `context` arguments. The callback provided will have a `completed` argument while the context is mandatory and must be a plain old JavaScript object. The `transaction()` function makes use of the `context` object itself, in fact, with the object's `connection`, `operations` and `completed` properties being reserved.
 
-In the example below, three operations has been provided and the context has properties that they will make use of:
+In the example below, three operations have been provided and the context has properties that they will make use of:
 
 ```
 const configuration = ... ,
@@ -178,7 +178,9 @@ transaction(configuration, operations, (completed) => {
 }, context);
 ```
 
-The signatures of the operations are given in the usage section. The bodies of the operations are immaterial, again see the usage section for idees. What follows are general prescriptions for how to make use of transactions.
+The signatures of the operations have already been demonstrated in the examples above. In fact the bodies of the operations are immaterial, they do not have to execute statements and can contain any application logic. However, if you do want to execute statement inside and operation then again see the examples for guidance on how to integration the statement methods with the operation callbacks. 
+
+What follows are general prescriptions for how to make use of transactions.
 
 * You can try to insert values into a table and test whether they are unique by whether or not the insert fails. However, the database will throw an error that is indistinguishable from errors that occur because of, say, syntax errors in the SQL. It could be argued that it is bad practice to knowingly run a query that may result in an error and use the presence of such as an indication of whether or not an otherwise correct query has been successful.
 
