@@ -251,29 +251,6 @@ Of course both of these functions can be utilised using promises directly, that 
 
 Finally, note that it is easy to encapsulate the instantiation of promises into a function called `promisify()` or such like, but nothing is provided by this package.  
 
-### Statement class specification
-
-The following specification gives a complete and more detailed list of the methods available.
-
-* One of the `selectFrom()`, `insertInto()`, `deleteFrom()` or `delete()` methods must be called. Each takes a string for the name of a table or view. 
-
-It is recommended that these methods are not called directly, by the way, rather methods that call them indirectly are created on a subclass of the `Statement` class, in order to avoid repetition. This is covered in the later subsection on extending the `Statement` class.
-
-* The `success()` method must accompany the `insertInto()`, `deleteFrom()` or `delete()` methods.
-* If the `selectFrom()` method is called, then one of the following of the following methods must also be called. Each takes a callback. In all but the last case, you must also call the `else()` method with a callback:
-    * The `none()` method for when no rows are returned.
-    * The `one()` method for when exactly one row is returned.
-    * The `first()` method for when one or more rows are returned.
-    * The `many()` method for when any number of rows are returned, including none.
-
-* The `catch()` method must always be called with a callback for when an exception occurs.
-* The `set()` method must be called along with the `update()` method.
-* The `where()` method can be called with all but the `insertInto()` method.
-* The `values()` method must be called along with the `insertInto()` method.
-* Either the `getSQL()` or `execute()` methods must be called, usually the latter.
-
-Each of the `set()`, `where()` and `values()` methods can take a plain old JavaScript object or an appended template literal. You cannot pass a string as an argument because there is a danger that it might contain an un-escaped value. By forcing you to pass an appended template literal, the method in question is able to pass the array of arguments it receives directly on to the underlying database package, thereby guaranteeing that they will be correctly cast and escaped.
-
 ### Extending the Statement class
 
 This is recommended for no other reason than to avoid repetitively passing table or view names to `selectFrom()` methods and the like. A simple exapmle will amply demonstrate:
@@ -325,7 +302,7 @@ module.exports = using;
 
 ...or require and instantiate it directly. The `using()` function is purely for convenience.
 
-### Getting and releasing connections
+### Connections
 
 The static `fromConfiguration()` method of the `Connection` class takes a configuration and a callback argument:
 
@@ -363,6 +340,29 @@ If you do not provide a `log` object, all logging is suppressed.
 In the event of an error, if a `log` property has been added to the `configuration` object then the `log.error()` function will be called with a message containing a reasonable stab at the cause of the error. Details can be found in the subsections of the same name in the specific package readme files.
 
 These messages are meant to help with debugging simple mistakes such as providing incorrect configuration. If you do not find them helpful, do not provide a `log` object and be assured that the errors are always returned by way of callback function arguments for you to deal with as you see fit.
+
+### Statement class specification
+
+The following specification gives a complete and more detailed list of the methods available.
+
+* One of the `selectFrom()`, `insertInto()`, `deleteFrom()` or `delete()` methods must be called. Each takes a string for the name of a table or view.
+
+It is recommended that these methods are not called directly, by the way, rather methods that call them indirectly are created on a subclass of the `Statement` class, in order to avoid repetition. This is covered in the later subsection on extending the `Statement` class.
+
+* The `success()` method must accompany the `insertInto()`, `deleteFrom()` or `delete()` methods.
+* If the `selectFrom()` method is called, then one of the following of the following methods must also be called. Each takes a callback. In all but the last case, you must also call the `else()` method with a callback:
+  * The `none()` method for when no rows are returned.
+  * The `one()` method for when exactly one row is returned.
+  * The `first()` method for when one or more rows are returned.
+  * The `many()` method for when any number of rows are returned, including none.
+
+* The `catch()` method must always be called with a callback for when an exception occurs.
+* The `set()` method must be called along with the `update()` method.
+* The `where()` method can be called with all but the `insertInto()` method.
+* The `values()` method must be called along with the `insertInto()` method.
+* Either the `getSQL()` or `execute()` methods must be called, usually the latter.
+
+Each of the `set()`, `where()` and `values()` methods can take a plain old JavaScript object or an appended template literal. You cannot pass a string as an argument because there is a danger that it might contain an un-escaped value. By forcing you to pass an appended template literal, the method in question is able to pass the array of arguments it receives directly on to the underlying database package, thereby guaranteeing that they will be correctly cast and escaped.
 
 ## Migrations
 
