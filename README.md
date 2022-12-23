@@ -154,9 +154,9 @@ All of the methods that can be called against the instances of statements return
 
 ### Using operations
 
-Ideally, all statements should be executed in the context of a transaction. Murmuration provides a single `transaction()` function that allows you to do this. It takes `configuration`, `operations`, `callback` and `context` arguments. The callback provided will have a `completed` argument while the context is mandatory and must be a plain old JavaScript object. The `transaction()` function makes use of the `context` object itself, in fact, with the object's `connection`, `operations` and `completed` properties being reserved.
+Ideally, all statements should be executed in the context of a transaction. Murmuration provides a `transaction()` function that allows you to do this. It takes `configuration`, `operations`, `callback` and `context` arguments. The callback provided will have a `completed` argument while the context is mandatory and must be a plain old JavaScript object. The `transaction()` function makes use of the `context` object itself, in fact, with the object's `connection`, `operations` and `completed` properties being reserved.
 
-In the example below, three operations have been provided and the context has properties that they will make use of:
+In the example below, three operations have been provided and the context has some example properties that they will make use of:
 
 ```
 const configuration = ... ,
