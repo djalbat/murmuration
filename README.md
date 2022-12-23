@@ -152,7 +152,7 @@ In general, the assumption with passing plain old JavaScript objects is that cla
 
 All of the methods that can be called against the instances of statements returned from the `using()` function are described in the statement specification subsection further below. 
 
-### Using operations
+### Operations and transactions
 
 Ideally, all statements should be executed in the context of a transaction. Murmuration provides a `transaction()` function that allows you to do this. It takes `configuration`, `operations`, `callback` and `context` arguments. The callback provided will have a `completed` argument while the context is mandatory and must be a plain old JavaScript object. The `transaction()` function makes use of the `context` object itself, in fact, with the object's `connection`, `operations` and `completed` properties being reserved.
 
@@ -251,7 +251,7 @@ Of course both of these functions can be utilised using promises directly, that 
 
 Finally, note that it is easy to encapsulate the instantiation of promises into a function called `promisify()` or such like, but nothing is provided by this package.  
 
-### Extending the Statement class
+### Extending the `Statement` class
 
 This is recommended for no other reason than to avoid repetitively passing table or view names to `selectFrom()` methods and the like. A simple exapmle will amply demonstrate:
 
