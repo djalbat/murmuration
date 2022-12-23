@@ -31,13 +31,18 @@ Remember that it is the aforementioned specific packages that you should install
 
 ## Usage
 
-Aside from small differences in configuration and error handling the Functionality across the aforementioned specific packages is identical, and is therefore covered here.
+Functionality across the aforementioned specific packages is identical, aside from small differences in configuration and error handling, and is therefore covered here.
 
-Statements are covered first up, but ideally they should be executed in the context of transactions and therefore the remainder of this section cannot be overlooked. In particular, the example statements that follow are executed inside operations, which are covered in the later subsection on transactions. If you do not want to use Murmuration's operations then you can in fact easily wrap statements in promises, see the relevant subsection below.
+Statements are covered first up, but ideally they should be executed in the context of transactions and therefore the remainder of this section cannot be overlooked. In particular, the example statements that follow are executed inside operations, which are covered in the later subsection. If you do not want to use operations then you can in fact easily wrap statements in promises, again see the relevant subsection below.
 
 ### Generating statements
 
-Statements are generated dynamically with a simple, promise-like syntax. 
+Statements are generated dynamically with a simple, promise-like syntax. Again it is worth noting that statements are executed inside operations, which themselves rely on transactions, both of which are covered later on.
+
+Note that the following points apply to all of the examples given next:
+
+* A local `using()` function has been employed rather the function supplied by the package, because the `Statement` class it utilities has been extended. See the relevant subsection below for more details.
+* Each operation provides a connection and a context as well as the `abort`, `proceed` and `compoete` callbacks. These allow the result of the execution to determine whether the application should abort, proceed to the next operation or complete, respectively. Again see the relevant section below.
 
 In the first example a row is selected should its email address and password match the given values:
 
@@ -69,8 +74,6 @@ function checkAccountOperation(connection, abort, proceed, complete, context) {
 
 There are several points worth noting:
 
-* A local `using()` function has been employed rather the function supplied by the package, because the `Statement` class it utilities has been extended. See the relevant subsection below for more details.
-* Each operation provides a connection and a context as well as the `abort`, `proceed` and `compoete` callbacks. These allow the result of the execution to determine whether the application should abort, proceed to the next operation or complete, respectively.
 * The `where()` method takes a plain old JavaScript object.
 * The `one()` method takes a handler that is called if one row is returned.
 * The `else()` method takes a handler that is called in all other cases.
