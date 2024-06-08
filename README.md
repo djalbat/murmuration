@@ -464,4 +464,4 @@ It is possible to use the same custom migration class for multiple custom migrat
 
 ## Contact
 
-- james.smith@djalbat.com
+* james.smith@djalbat.com
