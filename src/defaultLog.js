@@ -11,4 +11,4 @@ Object.assign(defaultLog, {
   fatal: () => {},
 });
 
-module.exports = defaultLog;
+export default defaultLog;

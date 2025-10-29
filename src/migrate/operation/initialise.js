@@ -1,10 +1,10 @@
 "use strict";
 
-const transaction = require("../../transaction");
+import transaction from "../../transaction";
 
-const { createTable, insertVersion, showLikeTables } = require("../../table/migration");
+import { createTable, insertVersion, showLikeTables } from "../../table/migration";
 
-function initialiseOperation(next, done, context) {
+export default function initialiseOperation(next, done, context) {
   const { configuration } = context,
         { log } = configuration;
 
@@ -38,8 +38,6 @@ function initialiseOperation(next, done, context) {
     next();
   }, context);
 }
-
-module.exports = initialiseOperation;
 
 function checkTablePresentOperatino(connection, abort, proceed, complete, context) {
   const { configuration } = context,

@@ -1,10 +1,10 @@
 "use strict";
 
-const { arrayUtilities } = require("necessary");
+import { arrayUtilities } from "necessary";
 
 const { second } = arrayUtilities;
 
-class CustomMigration {
+export default  class CustomMigration {
   constructor(filePath) {
     this.filePath = filePath;
   }
@@ -38,5 +38,3 @@ class CustomMigration {
     return customMigration;
   }
 }
-
-module.exports = CustomMigration;

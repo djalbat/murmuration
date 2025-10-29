@@ -1,6 +1,6 @@
 "use strict";
 
-function query(connection, sql, ...remainingArguments) {
+export function query(connection, sql, ...remainingArguments) {
   const parameters = remainingArguments,
         callback = parameters.pop();  ///
 
@@ -17,7 +17,7 @@ function query(connection, sql, ...remainingArguments) {
   }
 }
 
-function execute(connection, sql, ...remainingArguments) {
+export function execute(connection, sql, ...remainingArguments) {
   const parameters = remainingArguments,
         callback = parameters.pop();  ///
 
@@ -31,8 +31,3 @@ function execute(connection, sql, ...remainingArguments) {
     callback(error);
   }
 }
-
-module.exports = {
-  query,
-  execute
-};

@@ -1,12 +1,12 @@
 "use strict";
 
-const defaultLog = require("./defaultLog");
+import defaultLog from "./defaultLog";
 
-const { asynchronousUtilities } = require("necessary");
+import { asynchronousUtilities } from "necessary";
 
 const { whilst, sequence } = asynchronousUtilities;
       
-function transaction(configuration, operations, callback, context) {
+export default function transaction(configuration, operations, callback, context) {
   const { Connection } = configuration,
         completed = false;
 
@@ -47,8 +47,6 @@ function transaction(configuration, operations, callback, context) {
     }, context);
   });
 }
-
-module.exports = transaction;
 
 function beginTransactionOperation(next, done, context) {
   const { connection } = context,

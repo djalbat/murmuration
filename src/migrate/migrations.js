@@ -1,13 +1,13 @@
 "use strict";
 
-const { pathUtilities, fileSystemUtilities } = require("necessary");
+import { pathUtilities, fileSystemUtilities } from "necessary";
 
-const Migration = require("./migration");
+import Migration from "./migration";
 
 const { readDirectory } = fileSystemUtilities,
       { concatenatePaths } = pathUtilities;
 
-class Migrations {
+export default class Migrations {
   constructor(map) {
     this.map = map;
   }
@@ -47,8 +47,6 @@ class Migrations {
     return migrations;
   }
 }
-
-module.exports = Migrations;
 
 function customTextFileNamesFromEEntryNames(entryNames) { return fileNamesFromEntryNames(entryNames, (entryName) => /.+CUSTOM\.txt$/.test(entryName)); }
 

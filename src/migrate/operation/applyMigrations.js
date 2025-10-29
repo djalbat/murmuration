@@ -1,16 +1,16 @@
 "use strict";
 
-const { arrayUtilities, asynchronousUtilities } = require("necessary");
+import { arrayUtilities, asynchronousUtilities } from "necessary";
 
-const Migrations = require("../migrations"),
-      transaction = require("../../transaction");
+import Migrations from "../migrations";
+import transaction from "../../transaction";
 
-const { insertVersion, selectMaximumVersion } = require("../../table/migration");
+import { insertVersion, selectMaximumVersion } from "../../table/migration";
 
 const { first } = arrayUtilities,
       { whilst } = asynchronousUtilities;
 
-function applyMigrationsOperation(next, done, context) {
+export default function applyMigrationsOperation(next, done, context) {
   const { configuration, CustomMigrationMap, migrationsDirectoryPath } = context,
         migrations = Migrations.fromCustomMigrationMapAndMigrationsDirectoryPath(CustomMigrationMap, migrationsDirectoryPath),
         { log } = configuration;
@@ -30,8 +30,6 @@ function applyMigrationsOperation(next, done, context) {
   }, context);
 }
 
-module.exports = applyMigrationsOperation;
-  
 function applyMigrationOperation(next, done, context) {
   const { configuration } = context,
         { log } = configuration;

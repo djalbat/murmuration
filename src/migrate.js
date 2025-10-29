@@ -1,13 +1,13 @@
 "use strict";
 
-const initialiseOperation = require("./migrate/operation/initialise"),
-      applyMigrationsOperation = require("./migrate/operation/applyMigrations");
+import initialiseOperation from "./migrate/operation/initialise";
+import applyMigrationsOperation from "./migrate/operation/applyMigrations";
 
-const { asynchronousUtilities } = require("necessary");
+import { asynchronousUtilities } from "necessary";
 
 const { sequence } = asynchronousUtilities;
 
-function migrate(configuration, migrationsDirectoryPath, CustomMigrationMap, callback) {
+export default function migrate(configuration, migrationsDirectoryPath, CustomMigrationMap, callback) {
   if (callback === undefined) {
     callback = CustomMigrationMap; ///
 
@@ -32,5 +32,3 @@ function migrate(configuration, migrationsDirectoryPath, CustomMigrationMap, cal
     callback(error);
   }, context);
 }
-
-module.exports = migrate;

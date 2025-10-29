@@ -1,15 +1,15 @@
 "use strict";
 
-const { arrayUtilities } = require("necessary");
+import { arrayUtilities } from "necessary";
 
-const database = require("./database");
+import database from "./database";
 
-const { EMPTY_STRING } = require("./constants");
+import { EMPTY_STRING } from "./constants";
 
 const { first } = arrayUtilities,
       { query, execute: command } = database;
 
-class Statement {
+export default class Statement {
   constructor(connection, sql, query, parameters, oneHandler, noneHandler, manyHandler, elseHandler, firstHandler, errorHandler, successHandler) {
     this.connection = connection;
     this.sql = sql;
@@ -419,5 +419,3 @@ class Statement {
     return statement;
   }
 }
-
-module.exports = Statement;

@@ -1,8 +1,8 @@
 "use strict";
 
-const { query, execute } = require("../database");
+import { query, execute } from "../database";
 
-function createTable(connection, sql, callback) {
+export function createTable(connection, sql, callback) {
   execute(connection, sql, (error) => {
     if (error) {
       const log = connection.getLog();
@@ -14,7 +14,7 @@ function createTable(connection, sql, callback) {
   });
 }
 
-function insertVersion(connection, version, sql, callback) {
+export function insertVersion(connection, version, sql, callback) {
   execute(connection, sql, version, (error) => {
     if (error) {
       const log = connection.getLog();
@@ -26,7 +26,7 @@ function insertVersion(connection, version, sql, callback) {
   });
 }
 
-function showLikeTables(connection, sql, callback) {
+export function showLikeTables(connection, sql, callback) {
   query(connection, sql, (error, rows) => {
     if (error) {
       const log = connection.getLog();
@@ -38,7 +38,7 @@ function showLikeTables(connection, sql, callback) {
   });
 }
 
-function selectMaximumVersion(connection, sql, callback) {
+export function selectMaximumVersion(connection, sql, callback) {
   query(connection, sql, (error, rows) => {
     if (error) {
       const log = connection.getLog();
@@ -49,10 +49,3 @@ function selectMaximumVersion(connection, sql, callback) {
     callback(error, rows);
   });
 }
-
-module.exports = {
-  createTable,
-  insertVersion,
-  showLikeTables,
-  selectMaximumVersion
-};

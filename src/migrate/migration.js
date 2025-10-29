@@ -1,13 +1,13 @@
 "use strict";
 
-const { arrayUtilities, fileSystemUtilities } = require("necessary");
+import { arrayUtilities, fileSystemUtilities } from "necessary";
 
-const { execute } = require("../database");
+import { execute } from "../database";
 
 const { second } = arrayUtilities,
       { readFile } = fileSystemUtilities;
 
-class Migration {
+export default class Migration {
   constructor(filePath) {
     this.filePath = filePath;
   }
@@ -49,5 +49,3 @@ class Migration {
     return migration;
   }
 }
-
-module.exports = Migration;
