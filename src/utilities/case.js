@@ -16,3 +16,8 @@ export function snakeCaseToCamelCase(string) {
     return upperCaseCharacter;
   });
 }
+
+export default {
+  camelCaseToSnakeCase,
+  snakeCaseToCamelCase,
+};
