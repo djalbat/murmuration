@@ -31,3 +31,8 @@ export function execute(connection, sql, ...remainingArguments) {
     callback(error);
   }
 }
+
+export default {
+  query,
+  execute
+};
