@@ -4,7 +4,7 @@ import { arrayUtilities } from "necessary";
 
 import database from "./database";
 
-import { EMPTY_STRING } from "./constants";
+import { STRING, EMPTY_STRING } from "./constants";
 
 const { first } = arrayUtilities,
       { query, execute: command } = database;
@@ -122,20 +122,28 @@ export default class Statement {
     return this;
   }
 
-  set(objectOrArray, ...parameters) {
+  set(value, ...parameters) {
     let assignments;
 
-    const objectOrArrayIsArray = Array.isArray(objectOrArray);
+    const valueArray = isArray(value),
+          valueObject = isObject(value),
+          valueString = isString(value);
 
-    if (objectOrArrayIsArray) {
-      const array = objectOrArray,  ///
+    if (false) {
+      ///
+    } else if (valueArray) {
+      const array = value,  ///
             strings = array;  ///
 
       assignments = this.assignmentsFromStringsAndParameters(strings, parameters);
-    } else {
-      const object = objectOrArray;  ///
+    } else if (valueObject) {
+      const object = value;  ///
 
       assignments = this.assignmentsFromObject(object); ///
+    } else if (valueString) {
+      const string = value; ///
+
+      assignments = string; ///
     }
 
     this.sql = ` ${this.sql} SET ${assignments}`;
@@ -143,20 +151,28 @@ export default class Statement {
     return this;
   }
 
-  where(objectOrArray, ...parameters) {
+  where(value, ...parameters) {
     let clause;
 
-    const objectOrArrayIsArray = Array.isArray(objectOrArray);
+    const valueArray = isArray(value),
+          valueObject = isObject(value),
+          valueString = isString(value);
 
-    if (objectOrArrayIsArray) {
-      const array = objectOrArray,  ///
+    if (false) {
+      ///
+    } else if (valueArray) {
+      const array = value,  ///
             strings = array;  ///
 
       clause = this.clauseFromStringsAndParameters(strings, parameters);
-    } else {
-      const object = objectOrArray;  ///
+    } else if (valueObject) {
+      const object = value;  ///
 
       clause = this.clauseFromObject(object); ///
+    } else if (valueString) {
+      const string = value; ///
+
+      clause = string;  ///
     }
 
     this.sql = ` ${this.sql} WHERE ${clause}`;
@@ -164,20 +180,28 @@ export default class Statement {
     return this;
   }
 
-  values(objectOrArray, ...parameters) {
-    const objectOrArrayIsArray = Array.isArray(objectOrArray);
-
+  values(value, ...parameters) {
     let columnsAndValues;
 
-    if (objectOrArrayIsArray) {
-      const array = objectOrArray,  ///
+    const valueArray = isArray(value),
+          valueObject = isObject(value),
+          valueString = isString(value);
+
+    if (false) {
+      ///
+    } else if (valueArray) {
+      const array = value,  ///
             strings = array;  ///
 
       columnsAndValues = this.columnsAndValuesFromStringsAndParameters(strings, parameters);
-    } else {
-      const object = objectOrArray;  ///
+    } else if (valueObject) {
+      const object = value;  ///
 
       columnsAndValues = this.columnsAndValuesFromObject(object);
+    } else if (valueString) {
+      const string = value; ///
+
+      columnsAndValues = string;  ///
     }
 
     this.sql = `${this.sql} ${columnsAndValues}`;
@@ -418,4 +442,24 @@ export default class Statement {
 
     return statement;
   }
+}
+
+function isArray(value) {
+  const valueArray = Array.isArray(value);
+
+  return valueArray;
+}
+
+function isString(value) {
+  const valueString = (typeof value === STRING);
+
+  return valueString;
+}
+
+function isObject(value) {
+  const valueArray = isArray(value),
+        valueString = isString(value),
+        valueSObject = (!valueArray && !valueString);
+
+  return valueSObject
 }
