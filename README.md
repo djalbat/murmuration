@@ -158,10 +158,12 @@ Note:
 * The `set()` method takes a plain old JavaScript object.
 
 In general, the assumption with passing plain old JavaScript objects is that clauses and so forth can easily be constructed from them. 
-The `set()`, `where()` and `values()` methods can also take appended template literals, however, so that you can define parts of the SQL with more freedom. 
+The `set()`, `where()` and `values()` methods can also take appended template literals, however, so that you can define parts of the SQL with more freedom.
+Also, for the sake of simplicity, each of these methods can also take a string, given the most flexibility possible.
 More detail is given towards the end of the next subsection.
 
 All of the methods that can be called against the instances of statements returned from the `using()` function are described in the statement specification subsection further below. 
+
 
 ### Operations and transactions
 
