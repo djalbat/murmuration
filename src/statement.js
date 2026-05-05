@@ -1,13 +1,14 @@
 "use strict";
 
-import { arrayUtilities } from "necessary";
+import { jsonUtilities, arrayUtilities } from "necessary";
 
 import database from "./database";
 
-import { STRING, EMPTY_STRING } from "./constants";
+import { EMPTY_STRING } from "./constants";
 
 const { first } = arrayUtilities,
-      { query, execute: command } = database;
+      { query, execute: command } = database,
+      { isArray, isObject, isString } = jsonUtilities;
 
 export default class Statement {
   constructor(connection, sql, query, parameters, oneHandler, noneHandler, manyHandler, elseHandler, firstHandler, errorHandler, successHandler) {
@@ -442,24 +443,4 @@ export default class Statement {
 
     return statement;
   }
-}
-
-function isArray(value) {
-  const valueArray = Array.isArray(value);
-
-  return valueArray;
-}
-
-function isString(value) {
-  const valueString = (typeof value === STRING);
-
-  return valueString;
-}
-
-function isObject(value) {
-  const valueArray = isArray(value),
-        valueString = isString(value),
-        valueSObject = (!valueArray && !valueString);
-
-  return valueSObject
 }
